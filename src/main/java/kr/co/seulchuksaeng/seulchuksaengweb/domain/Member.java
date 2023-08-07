@@ -12,7 +12,7 @@ public class Member {
 
     @Id
     @GeneratedValue
-    @Column(name = "member_id", nullable = false)
+    @Column(name = "member_id")
     private Long memberId;
 
     @Column(name = "id", nullable = false)
@@ -38,6 +38,14 @@ public class Member {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberEvent> matches = new ArrayList<MemberEvent>();
 
+    public Member(String id, String password, String name, String phone, Gender gender, UserRole role) {
+        this.id = id;
+        this.password = password;
+        this.name = name;
+        this.phone = phone;
+        this.gender = gender;
+        this.role = role;
+    }
 
-
+    public Member () {}
 }
