@@ -10,6 +10,7 @@ import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AbstractAuthenticationToken;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -42,9 +43,17 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (IllegalArgumentException e) {
             logger.info(e.getMessage());
+            sendError(response, HttpStatus.UNAUTHORIZED, e.getMessage());
         } catch (IllegalAccessException e) {
             logger.warn(e.getMessage());
+            sendError(response, HttpStatus.UNAUTHORIZED, e.getMessage());
         }
+    }
+
+    private void sendError(HttpServletResponse response, HttpStatus status, String errorMessage) throws IOException { // HTTP 에러 메세지 보내주는 메서드
+        response.setStatus(status.value());
+        response.setCharacterEncoding("UTF-8"); // 문자 인코딩을 UTF-8로 설정
+        response.getWriter().write(errorMessage);
     }
 
     private String parseBearerToken(HttpServletRequest request) {
