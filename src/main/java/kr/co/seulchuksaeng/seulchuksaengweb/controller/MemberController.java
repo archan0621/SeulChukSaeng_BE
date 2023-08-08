@@ -26,7 +26,6 @@ public class MemberController {
 
     @PostMapping("/join") //회원가입 ENDPOINT
     public JoinResult join(JoinForm joinForm) {
-        log.info("회원가입 인증코드 = {}", verifyCode);
         try {
             memberService.verifiedMemberJoin(joinForm, verifyCode);
             Long joinId = memberService.join(joinForm);
