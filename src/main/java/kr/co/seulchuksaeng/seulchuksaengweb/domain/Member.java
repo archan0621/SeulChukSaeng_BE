@@ -35,16 +35,20 @@ public class Member {
     @Enumerated(EnumType.STRING)
     private UserRole role;
 
+    @Column(name = "salt", nullable = false)
+    private String salt;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberEvent> matches = new ArrayList<MemberEvent>();
 
-    public Member(String id, String password, String name, String phone, Gender gender, UserRole role) {
+    public Member(String id, String password, String name, String phone, Gender gender, UserRole role, String salt) {
         this.id = id;
         this.password = password;
         this.name = name;
         this.phone = phone;
         this.gender = gender;
         this.role = role;
+        this.salt = salt;
     }
 
     public Member () {}

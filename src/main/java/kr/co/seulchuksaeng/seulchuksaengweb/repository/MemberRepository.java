@@ -13,13 +13,16 @@ public class MemberRepository {
 
     private final EntityManager entityManager;
 
+    //회원 저장
     public void save (Member member) {
         entityManager.persist(member);
     }
 
-    public List<Member> findByName(String id){
+    //회원 id로 조회
+    public List<Member> findById(String id){
         return entityManager.createQuery("select m from Member m where m.id = :id", Member.class)
                 .setParameter("id", id)
                 .getResultList();
     }
+
 }

@@ -1,7 +1,10 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.controller;
 
+import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.dto.form.JoinForm;
+import kr.co.seulchuksaeng.seulchuksaengweb.domain.dto.form.LoginForm;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.dto.result.JoinResult;
+import kr.co.seulchuksaeng.seulchuksaengweb.domain.dto.result.LoginResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,7 +24,7 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @PostMapping("/join")
+    @PostMapping("/join") //회원가입 ENDPOINT
     public JoinResult join(JoinForm joinForm) {
         log.info("회원가입 인증코드 = {}", verifyCode);
         try {
@@ -33,5 +36,19 @@ public class MemberController {
 
         return new JoinResult("success", "회원가입 성공");
     }
+
+    @PostMapping("/login") //로그인 ENDPOINT
+    public LoginResult login(LoginForm loginForm) {
+
+        String jwtToken = "";
+
+        try {
+            jwtToken = memberService.login(loginForm);
+        } catch (IllegalStateException e) {
+            return new LoginResult("fail", e.getMessage(), jwtToken);
+        }
+        return new LoginResult("success", "로그인 성공", jwtToken);
+    }
+
 
 }
