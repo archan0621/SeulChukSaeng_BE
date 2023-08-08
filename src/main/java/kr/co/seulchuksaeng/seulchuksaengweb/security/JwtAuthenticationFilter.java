@@ -7,6 +7,7 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
+import kr.co.seulchuksaeng.seulchuksaengweb.domain.dto.result.NetworkError;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -43,17 +44,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
         } catch (IllegalArgumentException e) {
             logger.info(e.getMessage());
-            sendError(response, HttpStatus.UNAUTHORIZED, e.getMessage());
+            sendError(response, HttpStatus.UNAUTHORIZED, new NetworkError("fail",e.getMessage()));
         } catch (IllegalAccessException e) {
             logger.warn(e.getMessage());
-            sendError(response, HttpStatus.UNAUTHORIZED, e.getMessage());
+            sendError(response, HttpStatus.UNAUTHORIZED, new NetworkError("fail",e.getMessage()));
         }
     }
 
-    private void sendError(HttpServletResponse response, HttpStatus status, String errorMessage) throws IOException { // HTTP 에러 메세지 보내주는 메서드
+    private void sendError(HttpServletResponse response, HttpStatus status, NetworkError errorMessage) throws IOException { // HTTP 에러 메세지 보내주는 메서드
         response.setStatus(status.value());
         response.setCharacterEncoding("UTF-8"); // 문자 인코딩을 UTF-8로 설정
-        response.getWriter().write(errorMessage);
+        response.setContentType("application/json"); // JSON 형식으로 데이터를 처리
+        response.getWriter().write(errorMessage.toString());
     }
 
     private String parseBearerToken(HttpServletRequest request) {
