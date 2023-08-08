@@ -16,12 +16,15 @@ public class JoinForm {
 
     private Gender gender;
 
-    public JoinForm(String id, String password, String name, String phone, Gender gender) {
+    private String verifyCode;
+
+    public JoinForm(String id, String password, String name, String phone, Gender gender, String verifyCode) {
         this.id = id;
         this.password = password;
         this.name = name;
         this.phone = phone;
         this.gender = gender;
+        this.verifyCode = verifyCode;
     }
 
 }
