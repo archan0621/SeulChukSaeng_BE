@@ -74,6 +74,7 @@ public class MemberService {
         //회원 인증코드 검증
         String verifyCodeUser = joinForm.getVerifyCode();
         if (!Objects.equals(verifyCode, verifyCodeUser)) {
+            log.info("현재 인증코드 : {}, 입력받은 인증코드 : {} - 회원가입 거부", verifyCode, verifyCodeUser);
             throw new IllegalStateException("인증된 회원이 아닙니다. 회장에게 회원코드를 요청해주세요.");
         }
         log.info("현재 인증코드 : {}, 입력받은 인증코드 : {} - 회원가입 승인", verifyCode, verifyCodeUser);
