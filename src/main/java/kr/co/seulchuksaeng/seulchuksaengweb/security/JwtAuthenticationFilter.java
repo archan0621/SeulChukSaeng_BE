@@ -1,5 +1,7 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.security;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -30,13 +32,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = parseBearerToken(request);
-        User user = parseUserSpecification(token);
-        AbstractAuthenticationToken authenticated = UsernamePasswordAuthenticationToken.authenticated(user, token, user.getAuthorities());
-        authenticated.setDetails(new WebAuthenticationDetails(request));
-        SecurityContextHolder.getContext().setAuthentication(authenticated);
+        try {
+            String token = parseBearerToken(request);
+            User user = parseUserSpecification(token);
+            AbstractAuthenticationToken authenticated = UsernamePasswordAuthenticationToken.authenticated(user, token, user.getAuthorities());
+            authenticated.setDetails(new WebAuthenticationDetails(request));
+            SecurityContextHolder.getContext().setAuthentication(authenticated);
 
-        filterChain.doFilter(request, response);
+            filterChain.doFilter(request, response);
+        } catch (IllegalArgumentException e) {
+            logger.info(e.getMessage());
+        } catch (IllegalAccessException e) {
+            logger.warn(e.getMessage());
+        }
     }
 
     private String parseBearerToken(HttpServletRequest request) {
@@ -46,13 +54,18 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 .orElse(null);
     }
 
-    private User parseUserSpecification(String token) {
-        String[] split = Optional.ofNullable(token)
-                .filter(subject -> subject.length() >= 10)
-                .map(tokenProvider::validateTokenAndGetSubject)
-                .orElse("anonymous:anonymous")
-                .split(":");
-
-        return new User(split[0], "", List.of(new SimpleGrantedAuthority(split[1])));
+    private User parseUserSpecification(String token) throws IllegalAccessException {
+        try {
+            String[] split = Optional.ofNullable(token)
+                    .filter(subject -> subject.length() >= 10)
+                    .map(tokenProvider::validateTokenAndGetSubject)
+                    .orElse("anonymous:anonymous")
+                    .split(":");
+            return new User(split[0], "", List.of(new SimpleGrantedAuthority(split[1])));
+        } catch (ExpiredJwtException e) {
+            throw new IllegalArgumentException("만료된 토큰으로 JWT 요청시도"); //JWT 만료시 예외 처리
+        } catch (JwtException e) {
+            throw new IllegalAccessException("유효하지 않은 토큰으로 JWT 요청시도"); //변조된 JWT로 요청시 경고 처리
+        }
     }
 }
