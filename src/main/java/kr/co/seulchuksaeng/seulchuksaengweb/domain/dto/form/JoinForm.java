@@ -4,7 +4,7 @@ import kr.co.seulchuksaeng.seulchuksaengweb.domain.Gender;
 import lombok.Getter;
 
 @Getter
-public class JoinForm {
+public class JoinForm { //회원가입 요청 받을 때 사용하는 DTO
 
     private String id;
 

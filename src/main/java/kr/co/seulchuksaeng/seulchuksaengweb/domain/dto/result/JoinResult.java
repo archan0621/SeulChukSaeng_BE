@@ -3,7 +3,7 @@ package kr.co.seulchuksaeng.seulchuksaengweb.domain.dto.result;
 import lombok.Getter;
 
 @Getter
-public class JoinResult {
+public class JoinResult { //회원가입 요청에 대한 응답 DTO
 
     private String result;
 
