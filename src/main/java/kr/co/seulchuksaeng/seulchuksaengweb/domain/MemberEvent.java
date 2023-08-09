@@ -18,7 +18,8 @@ public class MemberEvent {
     @JoinColumn(name = "event_id")
     private Event event;
 
-    private Boolean attend;
+    @Enumerated(EnumType.STRING)
+    private Attendance attend;
 
     private Boolean purchased;
 
