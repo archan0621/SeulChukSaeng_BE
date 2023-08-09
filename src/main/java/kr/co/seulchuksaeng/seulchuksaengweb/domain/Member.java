@@ -38,10 +38,13 @@ public class Member {
     @Column(name = "salt", nullable = false)
     private String salt;
 
+    @Column(name = "warn_point")
+    private int warnPoint;
+
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberEvent> matches = new ArrayList<MemberEvent>();
 
-    public Member(String id, String password, String name, String phone, Gender gender, UserRole role, String salt) {
+    public Member(String id, String password, String name, String phone, Gender gender, UserRole role, String salt, int warnPoint) {
         this.id = id;
         this.password = password;
         this.name = name;
@@ -49,6 +52,7 @@ public class Member {
         this.gender = gender;
         this.role = role;
         this.salt = salt;
+        this.warnPoint = warnPoint;
     }
 
     public Member () {}

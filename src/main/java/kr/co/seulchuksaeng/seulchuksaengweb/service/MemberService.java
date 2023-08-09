@@ -33,7 +33,7 @@ public class MemberService {
         String saltPassword = crypto.saltPassword(joinForm.getPassword(), salt);
 
         // 암호화한 정보로 회원 저장
-        Member member = new Member(joinForm.getId(), saltPassword, joinForm.getName(), joinForm.getPhone(), joinForm.getGender(), UserRole.USER, salt);
+        Member member = new Member(joinForm.getId(), saltPassword, joinForm.getName(), joinForm.getPhone(), joinForm.getGender(), UserRole.USER, salt, 0);
         memberRepository.save(member);
 
         return member.getMemberId();
