@@ -2,8 +2,8 @@ package kr.co.seulchuksaeng.seulchuksaengweb.service;
 
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.UserRole;
-import kr.co.seulchuksaeng.seulchuksaengweb.domain.dto.form.JoinForm;
-import kr.co.seulchuksaeng.seulchuksaengweb.domain.dto.form.LoginForm;
+import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.JoinForm;
+import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.LoginForm;
 import kr.co.seulchuksaeng.seulchuksaengweb.repository.MemberRepository;
 import kr.co.seulchuksaeng.seulchuksaengweb.security.Crypto;
 import kr.co.seulchuksaeng.seulchuksaengweb.security.TokenProvider;

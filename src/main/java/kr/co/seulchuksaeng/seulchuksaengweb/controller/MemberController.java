@@ -1,12 +1,11 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.controller;
 
 import kr.co.seulchuksaeng.seulchuksaengweb.annotation.UserAuthorize;
-import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
-import kr.co.seulchuksaeng.seulchuksaengweb.domain.dto.form.JoinForm;
-import kr.co.seulchuksaeng.seulchuksaengweb.domain.dto.form.LoginForm;
-import kr.co.seulchuksaeng.seulchuksaengweb.domain.dto.result.GetUserNameResult;
-import kr.co.seulchuksaeng.seulchuksaengweb.domain.dto.result.JoinResult;
-import kr.co.seulchuksaeng.seulchuksaengweb.domain.dto.result.LoginResult;
+import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.JoinForm;
+import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.LoginForm;
+import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.GetUserNameResult;
+import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.JoinResult;
+import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.LoginResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
