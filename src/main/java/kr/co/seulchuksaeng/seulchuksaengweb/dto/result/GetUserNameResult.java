@@ -1,4 +1,4 @@
-package kr.co.seulchuksaeng.seulchuksaengweb.domain.dto.result;
+package kr.co.seulchuksaeng.seulchuksaengweb.dto.result;
 
 import lombok.Getter;
 
