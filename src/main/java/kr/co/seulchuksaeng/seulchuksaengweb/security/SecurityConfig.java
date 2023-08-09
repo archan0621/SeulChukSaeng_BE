@@ -17,6 +17,7 @@ import org.springframework.security.web.authentication.www.BasicAuthenticationFi
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
     private final String[] allowedUrls = {"/member/**"}; // 허용 URL 목록
 
     @Bean
@@ -31,6 +32,9 @@ public class SecurityConfig {
                         sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )	// 세션을 사용하지 않으므로 STATELESS 설정
                 .addFilterBefore(jwtAuthenticationFilter, BasicAuthenticationFilter.class) // JWT 검증 필터를 UsernamePasswordAuthenticationFilter 전에 넣음
+                .exceptionHandling(exceptionHandling -> //JWT 권한 확인 및 예외처리
+                        exceptionHandling.accessDeniedHandler(customAccessDeniedHandler))
                 .build();
     }
+
 }

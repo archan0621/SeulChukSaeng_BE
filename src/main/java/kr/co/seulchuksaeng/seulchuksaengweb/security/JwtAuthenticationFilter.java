@@ -58,14 +58,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         response.getWriter().write(errorMessage.toString());
     }
 
-    private String parseBearerToken(HttpServletRequest request) {
+    public String parseBearerToken(HttpServletRequest request) {
         return Optional.ofNullable(request.getHeader(HttpHeaders.AUTHORIZATION))
                 .filter(token -> token.substring(0, 7).equalsIgnoreCase("Bearer "))
                 .map(token -> token.substring(7))
                 .orElse(null);
     }
 
-    private User parseUserSpecification(String token) throws IllegalAccessException {
+    public User parseUserSpecification(String token) throws IllegalAccessException {
         try {
             String[] split = Optional.ofNullable(token)
                     .filter(subject -> subject.length() >= 10)
