@@ -4,6 +4,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.NetworkError;
+import kr.co.seulchuksaeng.seulchuksaengweb.exception.security.ExpiredTokenException;
+import kr.co.seulchuksaeng.seulchuksaengweb.exception.security.ModulatedTokenException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -28,9 +30,9 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
         User user = null;
         try {
             user = jwtAuthenticationFilter.parseUserSpecification(reqToken);
-        } catch (IllegalArgumentException e) {
+        } catch (ExpiredTokenException e) {
             sendError(response, HttpStatus.FORBIDDEN, new NetworkError("fail", "만료된 토큰으로 JWT 요청시도"));
-        } catch (IllegalAccessException e) {
+        } catch (ModulatedTokenException e) {
             sendError(response, HttpStatus.FORBIDDEN, new NetworkError("fail", "유효하지 않은 토큰으로 JWT 요청시도"));
         }
 

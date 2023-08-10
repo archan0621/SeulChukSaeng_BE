@@ -7,6 +7,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.NetworkError;
+import kr.co.seulchuksaeng.seulchuksaengweb.exception.security.ExpiredTokenException;
+import kr.co.seulchuksaeng.seulchuksaengweb.exception.security.ModulatedTokenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -41,10 +43,10 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authenticated);
 
             filterChain.doFilter(request, response);
-        } catch (IllegalArgumentException e) {
+        } catch (ExpiredTokenException e) {
             logger.info(e.getMessage());
             sendError(response, HttpStatus.UNAUTHORIZED, new NetworkError("fail",e.getMessage()));
-        } catch (IllegalAccessException e) {
+        } catch (ModulatedTokenException e) {
             logger.warn(e.getMessage());
             sendError(response, HttpStatus.UNAUTHORIZED, new NetworkError("fail",e.getMessage()));
         }
@@ -64,7 +66,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 .orElse(null);
     }
 
-    public User parseUserSpecification(String token) throws IllegalAccessException {
+    public User parseUserSpecification(String token) {
         try {
             String[] split = Optional.ofNullable(token)
                     .filter(subject -> subject.length() >= 10)
@@ -73,9 +75,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     .split(":");
             return new User(split[0], "", List.of(new SimpleGrantedAuthority(split[1])));
         } catch (ExpiredJwtException e) {
-            throw new IllegalArgumentException("만료된 토큰으로 JWT 요청시도"); //JWT 만료시 예외 처리
+            throw new ExpiredTokenException(); //JWT 만료시 예외 처리
         } catch (JwtException e) {
-            throw new IllegalAccessException("유효하지 않은 토큰으로 JWT 요청시도"); //변조된 JWT로 요청시 경고 처리
+            throw new ModulatedTokenException(); //변조된 JWT로 요청시 경고 처리
         }
     }
 }
