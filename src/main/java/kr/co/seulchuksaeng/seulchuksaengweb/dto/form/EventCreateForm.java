@@ -8,6 +8,8 @@ import java.time.LocalDateTime;
 @Getter
 public class EventCreateForm {
 
+    private String title;
+
     private String location;
 
     private Gender gender;

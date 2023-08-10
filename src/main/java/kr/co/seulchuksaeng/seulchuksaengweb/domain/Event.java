@@ -31,6 +31,21 @@ public class Event {
 
     private String money;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member createMember;
+
+    public Event(String title, String location, String description, Gender gender, LocalDateTime startTime, LocalDateTime endTime, String money, Member createMember) {
+        this.title = title;
+        this.location = location;
+        this.description = description;
+        this.gender = gender;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.money = money;
+        this.createMember = createMember;
+    }
+
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
     private List<MemberEvent> matches = new ArrayList<MemberEvent>();
 
