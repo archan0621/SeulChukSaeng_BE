@@ -43,7 +43,6 @@ public class MemberService {
         return member.getMemberId();
     }
 
-    @Transactional
     public String login(LoginForm loginForm) {
         Member member = new Member();
 
