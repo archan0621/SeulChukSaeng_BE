@@ -32,7 +32,7 @@ public class Event {
     private String money;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "create_member")
     private Member createMember;
 
     public Event(String title, String location, String description, Gender gender, LocalDateTime startTime, LocalDateTime endTime, String money, Member createMember) {
@@ -49,4 +49,7 @@ public class Event {
     @OneToMany(mappedBy = "event", cascade = CascadeType.ALL)
     private List<MemberEvent> matches = new ArrayList<MemberEvent>();
 
+    public Event() {
+
+    }
 }
