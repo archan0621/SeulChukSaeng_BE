@@ -19,10 +19,22 @@ public class MemberRepository {
     }
 
     //회원 id로 조회
-    public List<Member> findById(String id){
+    public List<Member> findMemberListById(String id){
         return entityManager.createQuery("select m from Member m where m.id = :id", Member.class)
                 .setParameter("id", id)
                 .getResultList();
+    }
+
+    public Member findMemberById(String id){
+        return entityManager.createQuery("select m from Member m where m.id = :id", Member.class)
+                .setParameter("id", id)
+                .getSingleResult();
+    }
+
+    public String findNameById(String id) {
+        return entityManager.createQuery("select m from Member m where m.id = :id", Member.class)
+                .setParameter("id", id)
+                .getSingleResult().getName();
     }
 
 }
