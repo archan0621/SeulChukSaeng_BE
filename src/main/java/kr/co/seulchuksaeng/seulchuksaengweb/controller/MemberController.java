@@ -1,5 +1,6 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.controller;
 
+import com.github.archan0621.DiscordLogger;
 import kr.co.seulchuksaeng.seulchuksaengweb.annotation.UserAuthorize;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.JoinForm;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.LoginForm;
@@ -30,6 +31,7 @@ public class MemberController {
 
     private final MemberService memberService;
     private final MemberRepository memberRepository;
+    DiscordLogger discordLogger = DiscordLogger.instance();
 
     @PostMapping("/join") //회원가입 ENDPOINT
     public JoinResult join(@RequestBody JoinForm joinForm) {
@@ -39,21 +41,19 @@ public class MemberController {
         } catch (ExistMemberException | UnverifiedJoinException e) { // 이미 멤버가 존재하거나, 인증코드가 맞지 않은 예외가 발생할 수 있음
             return new JoinResult("fail", e.getMessage());
         }
-
         return new JoinResult("success", "회원가입 성공");
     }
 
     @PostMapping("/login") //로그인 ENDPOINT
     public LoginResult login(@RequestBody LoginForm loginForm) {
 
-        String jwtToken = "";
-
         try {
-            jwtToken = memberService.login(loginForm);
+            String jwtToken = memberService.login(loginForm);
+            return new LoginResult("success", "로그인 성공", jwtToken);
         } catch (UserNotFoundException | WrongPasswordException e) { // 멤머가 존재하지 않거나 비밀번호가 일치하지 않는 예외가 발생할 수 있음
-            return new LoginResult("fail", e.getMessage(), jwtToken);
+            return new LoginResult("fail", e.getMessage(), null);
         }
-        return new LoginResult("success", "로그인 성공", jwtToken);
+
     }
 
     @GetMapping("/getUserName") // 유저 이름을 불러오면서 초기 Jwt 토큰 정상 발급 확인
