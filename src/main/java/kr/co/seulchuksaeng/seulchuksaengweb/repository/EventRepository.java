@@ -29,5 +29,8 @@ public class EventRepository {
                 .getResultList();
     }
 
+    public Event findEventById(Long eventId) {
+        return entityManager.find(Event.class, eventId);
+    }
 
 }

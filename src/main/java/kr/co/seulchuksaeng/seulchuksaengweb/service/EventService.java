@@ -1,9 +1,11 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.service;
 
+import jakarta.persistence.NoResultException;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Event;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Gender;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.EventCreateForm;
+import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventReadInnerResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.EventShowcaseResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventShowcaseInnerResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.NoEventException;
@@ -63,5 +65,24 @@ public class EventService {
         } catch (Exception e) {
             throw new NoEventException();
         }
+    }
+
+    public EventReadInnerResult read(Long eventId) {
+        try {
+            Event event = eventRepository.findEventById(eventId);
+            return EventReadInnerResult.builder()
+                    .eventId(event.getEventId())
+                    .title(event.getTitle())
+                    .location(event.getLocation())
+                    .startTime(event.getStartTime())
+                    .endTime(event.getEndTime())
+                    .gender(event.getGender())
+                    .money(event.getMoney())
+                    .description(event.getDescription())
+                    .build();
+        } catch (NoResultException e) {
+            throw new NoEventException();
+        }
+
     }
 }
