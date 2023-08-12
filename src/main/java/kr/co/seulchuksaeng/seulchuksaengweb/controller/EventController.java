@@ -3,14 +3,15 @@ package kr.co.seulchuksaeng.seulchuksaengweb.controller;
 import kr.co.seulchuksaeng.seulchuksaengweb.annotation.AdminAuthorize;
 import kr.co.seulchuksaeng.seulchuksaengweb.annotation.UserAuthorize;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
-import kr.co.seulchuksaeng.seulchuksaengweb.domain.UserRole;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.EventCreateForm;
+import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.EventReadForm;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.EventCreateResult;
+import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.EventReadResult;
+import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventReadInnerResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.EventShowcaseResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.NoEventException;
 import kr.co.seulchuksaeng.seulchuksaengweb.repository.MemberRepository;
 import kr.co.seulchuksaeng.seulchuksaengweb.service.EventService;
-import kr.co.seulchuksaeng.seulchuksaengweb.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -59,5 +60,18 @@ public class EventController {
         }
 
         return new EventShowcaseResult("fail", "조회에 오류가 발생하였습니다.", null, 0);
+    }
+
+    @UserAuthorize
+    @PostMapping("/read")
+    public EventReadResult readEvent(@RequestBody EventReadForm eventReadForm) {
+
+        try {
+            EventReadInnerResult result = eventService.read(eventReadForm.getEventId());
+            return new EventReadResult("success", "경기 조회에 성공하였습니다", result);
+        } catch (NoEventException e) {
+            return new EventReadResult("fail", e.getMessage(), null);
+        }
+        
     }
 }
