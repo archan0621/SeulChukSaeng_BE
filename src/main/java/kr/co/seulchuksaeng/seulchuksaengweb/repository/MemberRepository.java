@@ -2,7 +2,9 @@ package kr.co.seulchuksaeng.seulchuksaengweb.repository;
 
 import jakarta.persistence.EntityManager;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
+import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -26,9 +28,14 @@ public class MemberRepository {
     }
 
     public Member findMemberById(String id){
-        return entityManager.createQuery("select m from Member m where m.id = :id", Member.class)
-                .setParameter("id", id)
-                .getSingleResult();
+        try {
+            return entityManager.createQuery("select m from Member m where m.id = :id", Member.class)
+                    .setParameter("id", id)
+                    .getSingleResult();
+        } catch (Exception e) {
+            throw new UserNotFoundException();
+        }
+
     }
 
     public String findNameById(String id) {
