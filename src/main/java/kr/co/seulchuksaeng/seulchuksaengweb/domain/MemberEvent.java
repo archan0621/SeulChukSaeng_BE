@@ -21,6 +21,15 @@ public class MemberEvent {
     @Enumerated(EnumType.STRING)
     private Attendance attend;
 
-    private Boolean purchased;
+    @Enumerated(EnumType.STRING)
+    private PurchaseStatus purchased;
 
+    public MemberEvent(Member member, Event event, Attendance attend, PurchaseStatus purchased) {
+        this.member = member;
+        this.event = event;
+        this.attend = attend;
+        this.purchased = purchased;
+    }
+
+    public MemberEvent() {}
 }
