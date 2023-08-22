@@ -5,6 +5,7 @@ import kr.co.seulchuksaeng.seulchuksaengweb.annotation.UserAuthorize;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.EventCreateForm;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.EventReadForm;
+import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.EventUpdateForm;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.EventCreateResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.EventReadResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventReadInnerResult;
@@ -74,4 +75,16 @@ public class EventController {
         }
         
     }
+
+    @AdminAuthorize
+    @PostMapping("/update")
+    public EventCreateResult updateEvent(@RequestBody EventUpdateForm form) {
+        try {
+            eventService.update(form);
+            return new EventCreateResult("success", "경기 내용 수정에 성공하였습니다");
+        } catch (NoEventException e) {
+            return new EventCreateResult("fail", e.getMessage());
+        }
+    }
+
 }
