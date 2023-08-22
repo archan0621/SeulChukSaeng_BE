@@ -4,7 +4,9 @@ import jakarta.persistence.NoResultException;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Event;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Gender;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
+import kr.co.seulchuksaeng.seulchuksaengweb.domain.MemberEvent;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.EventCreateForm;
+import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.EventUpdateForm;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventReadInnerResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.EventShowcaseResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventShowcaseInnerResult;
@@ -83,6 +85,12 @@ public class EventService {
         } catch (NoResultException e) {
             throw new NoEventException();
         }
-
     }
+
+    @Transactional
+    public void update(EventUpdateForm form) {
+        Event event = eventRepository.findEventById(Long.valueOf(form.getEventId()));
+        event.update(form.getTitle(), form.getLocation(), form.getDescription(), form.getGender(), form.getStartTime(), form.getEndTime(), form.getMoney());
+    }
+
 }
