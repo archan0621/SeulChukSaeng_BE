@@ -1,5 +1,7 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.security;
 
+import com.github.archan0621.DiscordLogger;
+import com.github.archan0621.Scope;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -22,6 +24,7 @@ import java.io.IOException;
 public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private DiscordLogger discordLogger = DiscordLogger.instance();
 
     @Override
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
@@ -38,6 +41,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
 
         log.warn("권한 없는 접근 시도 - 아이디: {}, 아이피: {}, URL: {}", user != null ? user.getUsername() : "Unknown", request.getRemoteAddr(), request.getRequestURI());
         sendError(response, HttpStatus.FORBIDDEN, new NetworkError("fail", "접근 권한이 없습니다"));
+        discordLogger.send(String.format("🚨경고🚨 권한 없는 접근 시도 발생 - 아이디: %s, 아이피: %s, URL: %s", user != null ? user.getUsername() : "Unknown", request.getRemoteAddr(), request.getRequestURI()), Scope.here);
     }
 
     private void sendError(HttpServletResponse response, HttpStatus status, NetworkError errorMessage) throws IOException { // HTTP 에러 메세지 보내주는 메서드
