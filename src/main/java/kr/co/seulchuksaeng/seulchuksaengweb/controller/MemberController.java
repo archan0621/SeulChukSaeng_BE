@@ -2,6 +2,7 @@ package kr.co.seulchuksaeng.seulchuksaengweb.controller;
 
 import com.github.archan0621.DiscordLogger;
 import kr.co.seulchuksaeng.seulchuksaengweb.annotation.UserAuthorize;
+import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.JoinForm;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.LoginForm;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.GetUserNameResult;
@@ -61,13 +62,13 @@ public class MemberController {
     public GetUserNameResult getUserName(@AuthenticationPrincipal User user) {
 
         try {
-            String userName = memberRepository.findNameById(user.getUsername());
+            Member member = memberRepository.findMemberById(user.getUsername());
             log.info("Jwt 로그인 토큰 정상발급 확인 완료 : {}", user.getUsername());
-            return new GetUserNameResult("success", userName);
+            return new GetUserNameResult("success", member.getName(), member.getRole());
         } catch (Exception e) {
             //Jwt 토큰이 잘못되었거나 유저를 불러오지 못한 경우에 발생
             log.warn("유저 조회에 실패하였습니다");
-            return new GetUserNameResult("failed", "에러발생! 유저 조회에 실패하였습니다.");
+            return new GetUserNameResult("failed", "에러발생! 유저 조회에 실패하였습니다.", null);
         }
 
     }
