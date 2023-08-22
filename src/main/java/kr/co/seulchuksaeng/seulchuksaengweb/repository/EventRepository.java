@@ -3,6 +3,7 @@ package kr.co.seulchuksaeng.seulchuksaengweb.repository;
 import jakarta.persistence.EntityManager;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Event;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Gender;
+import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.NoEventException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -30,7 +31,11 @@ public class EventRepository {
     }
 
     public Event findEventById(Long eventId) {
-        return entityManager.find(Event.class, eventId);
+        Event event = entityManager.find(Event.class, eventId);
+        if (event == null) {
+            throw new NoEventException();
+        }
+        return event;
     }
 
 }
