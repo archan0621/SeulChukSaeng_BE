@@ -39,19 +39,23 @@ public class MemberController {
         try {
             memberService.verifiedMemberJoin(joinForm, verifyCode);
             Long joinId = memberService.join(joinForm);
+            log.info("회원가입 성공하였습니다 : {}", joinForm.getName());
+            return new JoinResult("success", "회원가입 성공");
         } catch (ExistMemberException | UnverifiedJoinException e) { // 이미 멤버가 존재하거나, 인증코드가 맞지 않은 예외가 발생할 수 있음
+            log.info("회원가입 실패하였습니다 : {}, 실패 사유 - {}", joinForm.getName(), e.getMessage());
             return new JoinResult("fail", e.getMessage());
         }
-        return new JoinResult("success", "회원가입 성공");
     }
 
     @PostMapping("/login") //로그인 ENDPOINT
     public LoginResult login(@RequestBody LoginForm loginForm) {
-
+        log.info("로그인 요청이 발생하였습니다, ID : {}", loginForm.getLoginId());
         try {
             String jwtToken = memberService.login(loginForm);
+            log.info("로그인 성공하였습니다, ID : {}", loginForm.getLoginId());
             return new LoginResult("success", "로그인 성공", jwtToken);
         } catch (UserNotFoundException | WrongPasswordException e) { // 멤머가 존재하지 않거나 비밀번호가 일치하지 않는 예외가 발생할 수 있음
+            log.info("로그인 실패하였습니다 : {}, 실패 사유 - {}", loginForm.getLoginId(), e.getMessage());
             return new LoginResult("fail", e.getMessage(), null);
         }
 
@@ -67,7 +71,7 @@ public class MemberController {
             return new GetUserNameResult("success", member.getName(), member.getRole());
         } catch (Exception e) {
             //Jwt 토큰이 잘못되었거나 유저를 불러오지 못한 경우에 발생
-            log.warn("유저 조회에 실패하였습니다");
+            log.info("Jwt 로그인 토큰 정상발급 확인 실패 : {}", user.getUsername());
             return new GetUserNameResult("failed", "에러발생! 유저 조회에 실패하였습니다.", null);
         }
 
