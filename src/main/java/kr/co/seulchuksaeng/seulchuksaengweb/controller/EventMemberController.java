@@ -13,6 +13,7 @@ import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventMemberLi
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.AlreadyMemberInEventException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.NoEventException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.AlreadyAttendException;
+import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.NoEventMemberException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.UserNotFoundException;
 import kr.co.seulchuksaeng.seulchuksaengweb.service.EventMemberService;
 import lombok.RequiredArgsConstructor;
@@ -48,7 +49,7 @@ public class EventMemberController {
         }
     }
 
-    @AdminAuthorize
+    @UserAuthorize
     @PostMapping("/memberList")
     public EventMemberListResult memberList(@RequestBody EventMemberListForm form, @AuthenticationPrincipal User user) { //SS301 해당 경기에 참여 인원 조회
         try {
@@ -98,7 +99,7 @@ public class EventMemberController {
             eventMemberService.attendMember(form.getEventId(), user.getUsername());
             log.info("경기에 회원을 출석처리하였습니다 : {}, {}", user.getUsername(), form.getEventId());
             return new EventAttendResult("success", "회원을 경기에 출석처리하였습니다.");
-        } catch (UserNotFoundException | NoEventException | AlreadyAttendException e) {
+        } catch (UserNotFoundException | NoEventException | AlreadyAttendException | NoEventMemberException e) {
             log.info("경기에 회원 출석처리에 실패하였습니다 : {}, {}, {}", user.getUsername(), form.getEventId(), e.getMessage());
             return new EventAttendResult("fail", e.getMessage());
         }

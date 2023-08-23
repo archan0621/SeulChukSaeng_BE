@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Event;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.MemberEvent;
+import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.NoEventMemberException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
@@ -62,9 +63,13 @@ public class EventMemberRepository {
 
 
     public MemberEvent findMemberEventByMemberAndEvent(Member member, Event event) {
-        return entityManager.createQuery("select me from MemberEvent me where me.member = :member and me.event = :event", MemberEvent.class)
-                .setParameter("member", member)
-                .setParameter("event", event)
-                .getSingleResult();
+        try {
+            return entityManager.createQuery("select me from MemberEvent me where me.member = :member and me.event = :event", MemberEvent.class)
+                    .setParameter("member", member)
+                    .setParameter("event", event)
+                    .getSingleResult();
+        } catch (Exception e) {
+            throw new NoEventMemberException();
+        }
     }
 }
