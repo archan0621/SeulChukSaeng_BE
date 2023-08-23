@@ -10,7 +10,7 @@ import java.util.List;
 @Entity @Getter
 public class Event {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @JoinColumn(name = "event_id")
     private Long eventId;
 

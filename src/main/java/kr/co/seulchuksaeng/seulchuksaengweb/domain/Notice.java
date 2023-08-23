@@ -8,9 +8,9 @@ import java.time.LocalDateTime;
 @Entity @Getter
 public class Notice {
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "notice_id")
-    private String noticeId;
+    private Long noticeId;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
