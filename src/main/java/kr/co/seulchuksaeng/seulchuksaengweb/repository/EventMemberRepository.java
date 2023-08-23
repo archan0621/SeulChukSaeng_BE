@@ -26,6 +26,7 @@ public class EventMemberRepository {
                 .getResultList();
 
         List<Member> members = new ArrayList<>();
+
         for (MemberEvent memberEvent : resultList) {
             members.add(memberEvent.getMember());
         }
@@ -60,4 +61,10 @@ public class EventMemberRepository {
     }
 
 
+    public MemberEvent findMemberEventByMemberAndEvent(Member member, Event event) {
+        return entityManager.createQuery("select me from MemberEvent me where me.member = :member and me.event = :event", MemberEvent.class)
+                .setParameter("member", member)
+                .setParameter("event", event)
+                .getSingleResult();
+    }
 }

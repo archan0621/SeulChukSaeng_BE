@@ -66,4 +66,12 @@ public class EventMemberService {
         }
     }
 
+    @Transactional
+    public void attendMember(String eventId, String memberId) {
+        Member member = memberRepository.findMemberById(memberId);
+        Event event = eventRepository.findEventById(Long.valueOf(eventId));
+        MemberEvent memberEvent = eventMemberRepository.findMemberEventByMemberAndEvent(member, event);
+        memberEvent.attend();
+    }
+
 }
