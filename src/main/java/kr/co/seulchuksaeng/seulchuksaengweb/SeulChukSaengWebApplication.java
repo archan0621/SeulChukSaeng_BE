@@ -20,6 +20,5 @@ public class SeulChukSaengWebApplication {
     public void init() {
         DiscordLogger discordLogger = DiscordLogger.instance();
         discordLogger.webhookUrl = webhookUrl;
-        System.out.println("discordLogger.webhookUrl = " + discordLogger.webhookUrl);
     }
 }
