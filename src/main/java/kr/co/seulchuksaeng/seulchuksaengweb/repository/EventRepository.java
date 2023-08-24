@@ -17,6 +17,8 @@ public class EventRepository {
 
     public void save(Event event) { entityManager.persist(event);}
 
+    public void delete(Event event) { entityManager.remove(event);}
+
     public List<Event> findEventList() {
         return entityManager.createQuery("select e from Event e order by e.startTime desc", Event.class)
                 .setMaxResults(4)

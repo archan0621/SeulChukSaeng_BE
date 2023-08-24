@@ -10,6 +10,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
@@ -26,13 +27,9 @@ public class EventMemberRepository {
                 .setParameter("event", event)
                 .getResultList();
 
-        List<Member> members = new ArrayList<>();
-
-        for (MemberEvent memberEvent : resultList) {
-            members.add(memberEvent.getMember());
-        }
-
-        return members;
+        return resultList.stream()
+                .map(MemberEvent::getMember)
+                .collect(Collectors.toList());
     }
 
     // event와 member를 파라미터로 받아서 event에 member가 포함되어 있는지 확인
