@@ -100,7 +100,7 @@ public class EventController {
     }
 
     @AdminAuthorize
-    @PostMapping("/delete")
+    @PostMapping("/remove")
     public EventRemoveResult removeEvent(@RequestBody EventRemoveForm form, @AuthenticationPrincipal User user) {
         log.info("경기 삭제 요청이 발생하였습니다 - 요청자 : {}, 경기 고유번호 : {}", user.getUsername(), form.getEventId());
         try {
