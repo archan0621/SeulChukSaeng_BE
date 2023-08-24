@@ -55,7 +55,7 @@ public class EventMemberController {
     public EventMemberListResult memberList(@RequestBody EventMemberListForm form, @AuthenticationPrincipal User user) { //SS301 해당 경기에 참여 인원 조회
         log.info("경기 참여 인원 조회 요청이 발생하였습니다 - 요청자 : {}, 경기 고유 번호 : {}", user.getUsername(), form.getEventId());
         try {
-            ArrayList<EventMemberListInnerResult> innerResult = eventMemberService.playingMemberList(form.getEventId());
+            List<EventMemberListInnerResult> innerResult = eventMemberService.playingMemberList(form.getEventId());
             log.info("경기 참여 인원 조회에 성공하였습니다 - 요청자 : {}, 경기 고유 번호 : {}", user.getUsername(), form.getEventId());
             return new EventMemberListResult("success", "경기 참여 인원을 조회하였습니다.", innerResult, innerResult.size());
         } catch (NoEventException e) {

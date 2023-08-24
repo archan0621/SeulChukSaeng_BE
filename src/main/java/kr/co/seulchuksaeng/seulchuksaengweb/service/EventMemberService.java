@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -38,9 +39,14 @@ public class EventMemberService {
         return list;
     }
 
-    public List<Member> playingMemberList(String eventId) {
+    @Transactional
+    public List<EventMemberListInnerResult> playingMemberList(String eventId) {
         Event event = eventRepository.findEventById(Long.valueOf(eventId));
-        return eventMemberRepository.getAllMemberList(event);
+        List<Member> allMemberList = eventMemberRepository.getAllMemberList(event);
+
+        return allMemberList.stream()
+                .map(member -> new EventMemberListInnerResult(member.getId(), member.getName()))
+                .collect(Collectors.toList());
     }
 
     @Transactional
