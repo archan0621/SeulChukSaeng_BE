@@ -48,7 +48,7 @@ public class MemberService {
 
         //회원 존재 여부 확인
         try {
-            member = memberRepository.findMemberListById(loginForm.getLoginId()).get(0);
+            member = memberRepository.findMemberById(loginForm.getLoginId());
         } catch (IndexOutOfBoundsException e) {
             throw new UserNotFoundException();
         }
@@ -68,9 +68,11 @@ public class MemberService {
 
     private void validateDuplicateMember(JoinForm joinForm) {
         //EXCEPTION
-        List<Member> findMembers = memberRepository.findMemberListById(joinForm.getId());
-        if (!findMembers.isEmpty()) {
+        try {
+            Member member = memberRepository.findMemberById(joinForm.getId());
             throw new ExistMemberException();
+        } catch (UserNotFoundException e) {
+            return;
         }
     }
 
