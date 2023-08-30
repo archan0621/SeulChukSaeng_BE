@@ -2,19 +2,16 @@ package kr.co.seulchuksaeng.seulchuksaengweb.controller;
 
 import kr.co.seulchuksaeng.seulchuksaengweb.annotation.AdminAuthorize;
 import kr.co.seulchuksaeng.seulchuksaengweb.annotation.UserAuthorize;
-import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.EventAttendForm;
-import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.EventMemberAddForm;
+import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.EventMemberForm;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.EventMemberListForm;
-import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.EventAttendResult;
+import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.EventMemberResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.EventMemberAddResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.EventMemberListResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventMemberListInnerResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.AlreadyMemberInEventException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.NoEventException;
-import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.AlreadyAttendException;
-import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.NoEventMemberException;
-import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.UserNotFoundException;
+import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.*;
 import kr.co.seulchuksaeng.seulchuksaengweb.service.EventMemberService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -66,7 +63,7 @@ public class EventMemberController {
 
     @AdminAuthorize
     @PostMapping("/memberAdd")
-    public EventMemberAddResult memberAdd(@RequestBody EventMemberAddForm form, @AuthenticationPrincipal User user) { //SS302 해당 경기에 참여 인원 추가.
+    public EventMemberAddResult memberAdd(@RequestBody EventMemberForm.basic form, @AuthenticationPrincipal User user) { //SS302 해당 경기에 참여 인원 추가.
         log.info("경기에 회원 추가 요청이 발생하였습니다 - 요청자 : {}, 경기 고유 번호 : {}, 회원 아이디 : {}", user.getUsername(), form.getEventId(), form.getMemberId());
         try {
             eventMemberService.addMember(form.getEventId(), form.getMemberId());
@@ -80,7 +77,7 @@ public class EventMemberController {
 
     @AdminAuthorize
     @PostMapping("/memberRemove") //SS304 해당 경기에 참여 인원 삭제
-    public EventMemberAddResult memberRemove(@RequestBody EventMemberAddForm form, @AuthenticationPrincipal User user) {
+    public EventMemberAddResult memberRemove(@RequestBody EventMemberForm.basic form, @AuthenticationPrincipal User user) {
         log.info("경기에서 회원 삭제 요청이 발생하였습니다 - 요청자 : {}, 경기 고유 번호 : {}, 회원 아이디 : {}", user.getUsername(), form.getEventId(), form.getMemberId());
         try {
             eventMemberService.removeMember(form.getEventId(), form.getMemberId());
@@ -93,16 +90,59 @@ public class EventMemberController {
     }
 
     @UserAuthorize
-    @PostMapping("/memberAttend")
-    public EventAttendResult memberAttend(@RequestBody EventAttendForm form, @AuthenticationPrincipal User user) { //SS305 해당 경기에 참여 인원 출석
+    @PostMapping("/memberAttend") //SS305 해당 경기에 참여 인원 출석
+    public EventMemberResult memberAttend(@RequestBody EventAttendForm form, @AuthenticationPrincipal User user) {
         log.info("경기에 회원 출석처리 요청이 발생하였습니다 - 요청자 : {}, 경기 고유 번호 : {}", user.getUsername(), form.getEventId());
         try {
             eventMemberService.attendMember(form.getEventId(), user.getUsername());
-            log.info("경기에 회원을 출석처리하였습니다 - 요청자 : {}, 경기 고유 번호 : {}", user.getUsername(), form.getEventId());
-            return new EventAttendResult("success", "회원을 경기에 출석처리하였습니다.");
+            log.info("경기에 회원 출석처리에 성공하였습니다. - 요청자 : {}, 경기 고유 번호 : {}", user.getUsername(), form.getEventId());
+            return new EventMemberResult("success", "회원을 경기에 출석처리하였습니다.");
         } catch (UserNotFoundException | NoEventException | AlreadyAttendException | NoEventMemberException e) {
             log.info("경기에 회원 출석처리에 실패하였습니다 - 요청자 : {}, 경기 고유 번호 : {}, 실패 사유 : {}", user.getUsername(), form.getEventId(), e.getMessage());
-            return new EventAttendResult("fail", e.getMessage());
+            return new EventMemberResult("fail", e.getMessage());
+        }
+    }
+
+    @UserAuthorize
+    @PostMapping("/memberPurchaseReq") //SS306 해당 경기 활동비 납부 확인을 요청한다.
+    public EventMemberResult.basic memberPurchaseRequest(@RequestBody EventMemberForm.basic form, @AuthenticationPrincipal User user) {
+        log.info("경기 활동비 납부 확인 요청이 발생하였습니다 - 요청자 : {}, 경기 고유 번호 : {}", user.getUsername(), form.getEventId());
+        try {
+            log.info("경기 활동비 납부 확인 요청에 성공하였습니다 - 요청자 : {}, 경기 고유 번호 : {}", user.getUsername(), form.getEventId());
+            eventMemberService.purchaseRequest(form.getEventId(), form.getMemberId());
+            return new EventMemberResult.basic("success", "경기 활동비 납부 확인 요청에 성공하였습니다.");
+        } catch (UserNotFoundException | NoEventException | NoEventMemberException | AlreadyPurchasedException |
+                 WatingPurchaseException e) {
+            log.info("경기 활동비 납부 확인 요청에 실패하였습니다 - 요청자 : {}, 경기 고유 번호 : {}, 실패 사유 : {}", user.getUsername(), form.getEventId(), e.getMessage());
+            return new EventMemberResult.basic("fail", e.getMessage());
+        }
+    }
+
+    @AdminAuthorize
+    @PostMapping("/memberPurchaseList") //SS307 활동비 납부 확인 요청 목록을 가져온다.
+    public EventMemberListResult memberPurchaseList(@RequestBody EventMemberForm.basic form, @AuthenticationPrincipal User user) {
+        log.info("경기 활동비 납부 확인 요청 목록 조회 요청이 발생하였습니다 - 요청자 : {}, 경기 고유 번호 : {}", user.getUsername(), form.getEventId());
+        try {
+            List<EventMemberListInnerResult> innerResults = eventMemberService.purchaseRequestList(form.getEventId());
+            log.info("경기 활동비 납부 확인 요청 목록 조회에 성공하였습니다 - 요청자 : {}, 경기 고유 번호 : {}", user.getUsername(), form.getEventId());
+            return new EventMemberListResult("success", "경기 활동비 납부 확인 요청 목록을 조회하였습니다.", innerResults, innerResults.size());
+        } catch (NoEventException e) {
+            log.info("경기 활동비 납부 확인 요청 목록 조회에 실패하였습니다 - 요청자 : {}, 경기 고유 번호 : {}, 실패 사유 : {}", user.getUsername(), form.getEventId(), e.getMessage());
+            return new EventMemberListResult("fail", e.getMessage(), null, 0);
+        }
+    }
+
+    @AdminAuthorize
+    @PostMapping("/memberPurchaseCheck") //SS308 활동비 납부 확인
+    public EventMemberResult.basic memberPurchaseCheck(@RequestBody EventMemberForm.basic form, @AuthenticationPrincipal User user) {
+        log.info("경기 활동비 납부 확인 요청이 발생하였습니다 - 요청자 : {}, 납부 확인 요청자 : {},경기 고유 번호 : {}", user.getUsername(), form.getMemberId(), form.getEventId());
+        try {
+            eventMemberService.purchaseCheck(form.getEventId(), form.getMemberId());
+            log.info("경기 활동비 납부 확인에 성공하였습니다 - 요청자 : {}, 경기 고유 번호 : {}", user.getUsername(), form.getEventId());
+            return new EventMemberResult.basic("success", "경기 활동비 납부 확인에 성공하였습니다.");
+        } catch (UserNotFoundException | NoEventException | NoEventMemberException | AlreadyPurchasedException e) {
+            log.info("경기 활동비 납부 확인에 실패하였습니다 - 요청자 : {}, 경기 고유 번호 : {}, 실패 사유 : {}", user.getUsername(), form.getEventId(), e.getMessage());
+            return new EventMemberResult.basic("fail", e.getMessage());
         }
     }
 

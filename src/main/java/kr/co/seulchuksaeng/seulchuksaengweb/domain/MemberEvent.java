@@ -2,6 +2,8 @@ package kr.co.seulchuksaeng.seulchuksaengweb.domain;
 
 import jakarta.persistence.*;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.AlreadyAttendException;
+import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.AlreadyPurchasedException;
+import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.WatingPurchaseException;
 import lombok.Getter;
 
 import java.time.Duration;
@@ -35,7 +37,7 @@ public class MemberEvent {
         this.purchased = purchased;
     }
 
-    public void attend() {
+    public Attendance attend() {
 
         if (this.attend == Attendance.ATTEND || this.attend == Attendance.LATE) { //이미 출결한 상태인 경우 예외 발생
             throw new AlreadyAttendException();
@@ -48,13 +50,42 @@ public class MemberEvent {
         // 두 시간 간의 차이 계산
         Duration timeDifference = Duration.between(eventStartTime, currentTime);
 
-        // 20분 이상이면 지각처리
+        // 20분 이상 늦으면 지각 처리
         if (timeDifference.toMinutes() >= 20) {
             this.attend = Attendance.LATE;
+            return Attendance.LATE;
         } else {
             this.attend = Attendance.ATTEND;
+            return Attendance.ATTEND;
         }
     }
 
+    public void purchaseRequest() {
+        if (this.purchased.equals(PurchaseStatus.PURCHASED)) { // 납부 상태가 납부 완료인 경우 예외 발생
+            throw new AlreadyPurchasedException();
+        }
+
+        if (this.purchased.equals(PurchaseStatus.WAITING)) { // 납부 상태가 확인 대기중인 경우 예외 발생
+            throw new WatingPurchaseException();
+        }
+
+        this.purchased = PurchaseStatus.WAITING;
+    }
+
+    public void purchaseCheck() {
+        if (this.purchased.equals(PurchaseStatus.PURCHASED)) { // 납부 상태가 납부 완료인 경우 예외 발생
+            throw new AlreadyPurchasedException();
+        }
+
+        if (this.purchased.equals(PurchaseStatus.NOT_PURCHASED)) { // 납부 상태가 납부 안함인 경우 예외 발생
+            throw new WatingPurchaseException();
+        }
+
+        this.purchased = PurchaseStatus.PURCHASED;
+    }
+
     public MemberEvent() {}
+
+
+
 }

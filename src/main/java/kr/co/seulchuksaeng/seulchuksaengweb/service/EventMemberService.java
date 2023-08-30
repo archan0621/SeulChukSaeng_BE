@@ -77,7 +77,36 @@ public class EventMemberService {
         Member member = memberRepository.findMemberById(memberId);
         Event event = eventRepository.findEventById(Long.valueOf(eventId));
         MemberEvent memberEvent = eventMemberRepository.findMemberEventByMemberAndEvent(member, event);
-        memberEvent.attend();
+        Attendance attend = memberEvent.attend();
+
+        if (attend.equals(Attendance.LATE)) {
+            log.info("{} 님이 지각하셨습니다, 경고 +1 처리됩니다.", member.getId());
+            member.giveWarnPoint();
+        }
+
     }
 
+    @Transactional
+    public void purchaseRequest(String eventId, String username) {
+        Member member = memberRepository.findMemberById(username);
+        Event event = eventRepository.findEventById(Long.valueOf(eventId));
+        MemberEvent memberEvent = eventMemberRepository.findMemberEventByMemberAndEvent(member, event);
+        memberEvent.purchaseRequest();
+    }
+
+    @Transactional
+    public List<EventMemberListInnerResult> purchaseRequestList(String eventId) {
+        Event event = eventRepository.findEventById(Long.valueOf(eventId));
+        return eventMemberRepository.getPurchaseRequestList(event).stream()
+                .map(member -> new EventMemberListInnerResult(member.getId(), member.getName()))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public void purchaseCheck(String eventId, String memberId) {
+        Member member = memberRepository.findMemberById(memberId);
+        Event event = eventRepository.findEventById(Long.valueOf(eventId));
+        MemberEvent memberEvent = eventMemberRepository.findMemberEventByMemberAndEvent(member, event);
+        memberEvent.purchaseCheck();
+    }
 }
