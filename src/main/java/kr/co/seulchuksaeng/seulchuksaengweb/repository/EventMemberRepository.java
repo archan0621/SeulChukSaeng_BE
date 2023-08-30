@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Event;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.MemberEvent;
+import kr.co.seulchuksaeng.seulchuksaengweb.domain.PurchaseStatus;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.NoEventMemberException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -69,4 +70,12 @@ public class EventMemberRepository {
             throw new NoEventMemberException();
         }
     }
+
+    public List<Member> getPurchaseRequestList(Event event) {
+        return entityManager.createQuery("select me.member from MemberEvent me where me.event = :event and me.purchased = :purchased", Member.class)
+                .setParameter("event", event)
+                .setParameter("purchased", PurchaseStatus.WAITING)
+                .getResultList();
+    }
+
 }
