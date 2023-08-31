@@ -109,7 +109,7 @@ public class EventMemberController {
         log.info("경기 활동비 납부 확인 요청이 발생하였습니다 - 요청자 : {}, 경기 고유 번호 : {}", user.getUsername(), form.getEventId());
         try {
             log.info("경기 활동비 납부 확인 요청에 성공하였습니다 - 요청자 : {}, 경기 고유 번호 : {}", user.getUsername(), form.getEventId());
-            eventMemberService.purchaseRequest(form.getEventId(), form.getMemberId());
+            eventMemberService.purchaseRequest(form.getEventId(), user.getUsername());
             return new EventMemberResult.basic("success", "경기 활동비 납부 확인 요청에 성공하였습니다.");
         } catch (UserNotFoundException | NoEventException | NoEventMemberException | AlreadyPurchasedException |
                  WatingPurchaseException e) {
