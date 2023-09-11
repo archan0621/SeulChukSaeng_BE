@@ -1,20 +1,31 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.NoResultException;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Event;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Gender;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
+import kr.co.seulchuksaeng.seulchuksaengweb.dto.AddressResponse;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.EventForm;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.EventResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventReadInnerResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventShowcaseInnerResult;
+import kr.co.seulchuksaeng.seulchuksaengweb.exception.NetworkException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.NoEventException;
+import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.NotValidAddressException;
 import kr.co.seulchuksaeng.seulchuksaengweb.repository.EventRepository;
 import kr.co.seulchuksaeng.seulchuksaengweb.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.web.reactive.function.client.WebClientAutoConfiguration;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -27,8 +38,16 @@ public class EventService {
     private final MemberRepository memberRepository;
     private final EventRepository eventRepository;
 
+    @Value("${mapApi.Secret}")
+    private String mapApiSecret;
+
+    @Value("${mapApi.Id}")
+    private String mapApiId;
+
     @Transactional
     public void create(EventForm.Create ef, String id) {
+
+        checkLocation(ef);
 
         Member member = memberRepository.findMemberById(id);
 
@@ -91,5 +110,50 @@ public class EventService {
         Event event = eventRepository.findEventById(Long.valueOf(eventId));
         eventRepository.delete(event);
     }
+
+    public void checkLocation(EventForm.Create ef) {
+        WebClient webClient = WebClient.builder()
+                .baseUrl("https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode")
+                .defaultHeader("X-NCP-APIGW-API-KEY-ID", mapApiId)
+                .defaultHeader("X-NCP-APIGW-API-KEY", mapApiSecret)
+                .build();
+
+        Mono<ResponseEntity<String>> responseMono = webClient
+                .get()
+                .uri(uriBuilder -> uriBuilder
+                        .queryParam("query", ef.getLocation())
+                        .build())
+                .retrieve()
+                .toEntity(String.class);
+
+        // 응답 처리
+        ResponseEntity<String> responseEntity = responseMono.block();
+        if (responseEntity == null) {
+            throw new NetworkException();
+        }
+
+        HttpStatusCode httpStatus = responseEntity.getStatusCode();
+        if (httpStatus != HttpStatus.OK) {
+            throw new NetworkException();
+        }
+
+        String responseBody = responseEntity.getBody();
+        if (responseBody != null && !responseBody.isEmpty()) {
+            ObjectMapper objectMapper = new ObjectMapper();
+            try {
+                AddressResponse addressResponse = objectMapper.readValue(responseBody, AddressResponse.class);
+
+                if (addressResponse.getMeta().getTotalCount() == 0) {
+                    throw new NotValidAddressException();
+                }
+
+            } catch (Exception e) {
+                throw new NetworkException();
+            }
+        } else {
+            throw new NotValidAddressException();
+        }
+    }
+
 
 }
