@@ -3,8 +3,6 @@ package kr.co.seulchuksaeng.seulchuksaengweb.service;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.*;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventMemberListInnerResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.AlreadyMemberInEventException;
-import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.NoEventException;
-import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.UserNotFoundException;
 import kr.co.seulchuksaeng.seulchuksaengweb.repository.EventMemberRepository;
 import kr.co.seulchuksaeng.seulchuksaengweb.repository.EventRepository;
 import kr.co.seulchuksaeng.seulchuksaengweb.repository.MemberRepository;
@@ -20,7 +18,7 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class EventMemberService {
+public class MemberEventService {
 
     private final EventMemberRepository eventMemberRepository;
     private final MemberRepository memberRepository;
