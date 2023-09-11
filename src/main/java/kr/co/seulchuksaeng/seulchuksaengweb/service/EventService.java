@@ -1,5 +1,6 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.NoResultException;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Event;
@@ -112,6 +113,7 @@ public class EventService {
     }
 
     public void checkLocation(EventForm.Create ef) {
+
         WebClient webClient = WebClient.builder()
                 .baseUrl("https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode")
                 .defaultHeader("X-NCP-APIGW-API-KEY-ID", mapApiId)
@@ -140,15 +142,16 @@ public class EventService {
         String responseBody = responseEntity.getBody();
         if (responseBody != null && !responseBody.isEmpty()) {
             ObjectMapper objectMapper = new ObjectMapper();
+
+            AddressResponse addressResponse = null;
             try {
-                AddressResponse addressResponse = objectMapper.readValue(responseBody, AddressResponse.class);
-
-                if (addressResponse.getMeta().getTotalCount() == 0) {
-                    throw new NotValidAddressException();
-                }
-
-            } catch (Exception e) {
+                addressResponse = objectMapper.readValue(responseBody, AddressResponse.class);
+            } catch (JsonProcessingException e) {
                 throw new NetworkException();
+            }
+
+            if (addressResponse.getMeta().getTotalCount() == 0) {
+                    throw new NotValidAddressException();
             }
         } else {
             throw new NotValidAddressException();
