@@ -4,10 +4,9 @@ import jakarta.persistence.NoResultException;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Event;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Gender;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
-import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.EventCreateForm;
-import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.EventUpdateForm;
+import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.EventForm;
+import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.EventResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventReadInnerResult;
-import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.EventShowcaseResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventShowcaseInnerResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.NoEventException;
 import kr.co.seulchuksaeng.seulchuksaengweb.repository.EventRepository;
@@ -29,7 +28,7 @@ public class EventService {
     private final EventRepository eventRepository;
 
     @Transactional
-    public void create(EventCreateForm ef, String id) {
+    public void create(EventForm.Create ef, String id) {
 
         Member member = memberRepository.findMemberById(id);
 
@@ -39,25 +38,25 @@ public class EventService {
 
     }
 
-    public EventShowcaseResult list() { // 관리자 전용 서비스
+    public EventResult.Showcase list() { // 관리자 전용 서비스
         try {
             List<EventShowcaseInnerResult> eventShowcaseInnerResultList = eventRepository.findEventList().stream()
                     .map(event -> new EventShowcaseInnerResult(event.getEventId(), event.getTitle()))
                     .collect(Collectors.toList());
 
-            return new EventShowcaseResult("success", "경기 목록 조회에 성공하였습니다", eventShowcaseInnerResultList, eventShowcaseInnerResultList.size());
+            return new EventResult.Showcase("success", "경기 목록 조회에 성공하였습니다", eventShowcaseInnerResultList, eventShowcaseInnerResultList.size());
         } catch (Exception e) {
             throw new NoEventException();
         }
     }
 
-    public EventShowcaseResult list(Gender gender) { // 일반 유저 서비스
+    public EventResult.Showcase list(Gender gender) { // 일반 유저 서비스
         try {
             List<EventShowcaseInnerResult> eventShowcaseInnerResultList = eventRepository.findEventList(gender).stream()
                     .map(event -> new EventShowcaseInnerResult(event.getEventId(), event.getTitle()))
                     .collect(Collectors.toList());
 
-            return new EventShowcaseResult("success", "경기 목록 조회에 성공하였습니다", eventShowcaseInnerResultList, eventShowcaseInnerResultList.size());
+            return new EventResult.Showcase("success", "경기 목록 조회에 성공하였습니다", eventShowcaseInnerResultList, eventShowcaseInnerResultList.size());
         } catch (Exception e) {
             throw new NoEventException();
         }
@@ -82,7 +81,7 @@ public class EventService {
     }
 
     @Transactional
-    public void update(EventUpdateForm form) {
+    public void update(EventForm.Update form) {
         Event event = eventRepository.findEventById(Long.valueOf(form.getEventId()));
         event.update(form.getTitle(), form.getLocation(), form.getDescription(), form.getGender(), form.getStartTime(), form.getEndTime(), form.getMoney());
     }

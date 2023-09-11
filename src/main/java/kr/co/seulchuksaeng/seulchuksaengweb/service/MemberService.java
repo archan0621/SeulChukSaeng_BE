@@ -2,8 +2,7 @@ package kr.co.seulchuksaeng.seulchuksaengweb.service;
 
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.UserRole;
-import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.JoinForm;
-import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.LoginForm;
+import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.MemberForm;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.ExistMemberException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.UnverifiedJoinException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.UserNotFoundException;
@@ -16,7 +15,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Objects;
 
 @Service @Slf4j
@@ -28,7 +26,7 @@ public class MemberService {
     private final TokenProvider tokenProvider;
 
     @Transactional
-    public Long join(JoinForm joinForm) {
+    public Long join(MemberForm.Join joinForm) {
         //중복 회원 검증
         validateDuplicateMember(joinForm);
 
@@ -43,7 +41,7 @@ public class MemberService {
         return member.getMemberId();
     }
 
-    public String login(LoginForm loginForm) {
+    public String login(MemberForm.Login loginForm) {
         Member member = new Member();
 
         //회원 존재 여부 확인
@@ -66,7 +64,7 @@ public class MemberService {
     }
 
 
-    private void validateDuplicateMember(JoinForm joinForm) {
+    private void validateDuplicateMember(MemberForm.Join joinForm) {
         //EXCEPTION
         try {
             Member member = memberRepository.findMemberById(joinForm.getId());
@@ -76,7 +74,7 @@ public class MemberService {
         }
     }
 
-    public void verifiedMemberJoin(JoinForm joinForm, String verifyCode) {
+    public void verifiedMemberJoin(MemberForm.Join joinForm, String verifyCode) {
         //회원 인증코드 검증
         String verifyCodeUser = joinForm.getVerifyCode();
         if (!Objects.equals(verifyCode, verifyCodeUser)) {
