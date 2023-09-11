@@ -30,7 +30,6 @@ public class EventController {
     private final MemberRepository memberRepository;
 
     @AdminAuthorize
-    @LogExecutionTime
     @PostMapping("/create")
     public EventResult.Create createEvent(@RequestBody EventForm.Create eventCreateForm, @AuthenticationPrincipal User user) {
         log.info("경기 생성 요청이 발생하였습니다 - 요청자 : {}, 경기 제목 : {}", user.getUsername(), eventCreateForm.getTitle());
