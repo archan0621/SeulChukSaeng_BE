@@ -3,6 +3,7 @@ package kr.co.seulchuksaeng.seulchuksaengweb.domain;
 import jakarta.persistence.*;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.AlreadyAttendException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.AlreadyPurchasedException;
+import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.EventNotStartException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.WatingPurchaseException;
 import lombok.Getter;
 
@@ -49,6 +50,11 @@ public class MemberEvent {
 
         // 두 시간 간의 차이 계산
         Duration timeDifference = Duration.between(eventStartTime, currentTime);
+
+        //경기 시작 1시간 전에 요청하면 예외처리
+        if (timeDifference.toMinutes() <= -60) {
+            throw new EventNotStartException();
+        }
 
         // 20분 이상 늦으면 지각 처리
         if (timeDifference.toMinutes() >= 20) {
