@@ -3,9 +3,12 @@ package kr.co.seulchuksaeng.seulchuksaengweb.service;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.*;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventMemberListInnerResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.AlreadyMemberInEventException;
+import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.FarFromLocationException;
 import kr.co.seulchuksaeng.seulchuksaengweb.repository.EventMemberRepository;
 import kr.co.seulchuksaeng.seulchuksaengweb.repository.EventRepository;
 import kr.co.seulchuksaeng.seulchuksaengweb.repository.MemberRepository;
+import kr.co.seulchuksaeng.seulchuksaengweb.security.Crypto;
+import kr.co.seulchuksaeng.seulchuksaengweb.util.DistanceCalc;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,7 @@ public class MemberEventService {
     private final EventMemberRepository eventMemberRepository;
     private final MemberRepository memberRepository;
     private final EventRepository eventRepository;
+    private final DistanceCalc distanceCalc;
 
     public ArrayList<EventMemberListInnerResult> notPlayingMemberList(String eventId) {
 
@@ -71,10 +75,16 @@ public class MemberEventService {
     }
 
     @Transactional
-    public void attendMember(String eventId, String memberId) {
-        Member member = memberRepository.findMemberById(memberId);
+    public void attendMember(String eventId, String memberId, Double latitude, Double longitude) {
+
         Event event = eventRepository.findEventById(Long.valueOf(eventId));
+        Member member = memberRepository.findMemberById(memberId);
         MemberEvent memberEvent = eventMemberRepository.findMemberEventByMemberAndEvent(member, event);
+
+        if (distanceCalc.calculateDistance(event.getLatitude(), event.getLongitude(), latitude, longitude) > 200) {
+            throw new FarFromLocationException();
+        }
+
         Attendance attend = memberEvent.attend();
 
         if (attend.equals(Attendance.LATE)) {

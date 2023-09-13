@@ -96,12 +96,15 @@ public class MemberEventController {
     public MemberEventResult.Attend memberAttend(@RequestBody MemberEventForm.Attend form, @AuthenticationPrincipal User user) {
         log.info("경기에 회원 출석처리 요청이 발생하였습니다 - 요청자 : {}, 경기 고유 번호 : {}", user.getUsername(), form.getEventId());
         try {
-            memberEventService.attendMember(form.getEventId(), user.getUsername());
+            memberEventService.attendMember(form.getEventId(), user.getUsername(), Double.valueOf(form.getLat()), Double.valueOf(form.getLng()));
             log.info("경기에 회원 출석처리에 성공하였습니다. - 요청자 : {}, 경기 고유 번호 : {}", user.getUsername(), form.getEventId());
             return new MemberEventResult.Attend("success", "회원을 경기에 출석처리하였습니다.");
-        } catch (UserNotFoundException | NoEventException | AlreadyAttendException | NoEventMemberException | EventNotStartException e) {
+        } catch (UserNotFoundException | NoEventException | AlreadyAttendException | NoEventMemberException | EventNotStartException | FarFromLocationException e) {
             log.info("경기에 회원 출석처리에 실패하였습니다 - 요청자 : {}, 경기 고유 번호 : {}, 실패 사유 : {}", user.getUsername(), form.getEventId(), e.getMessage());
             return new MemberEventResult.Attend("fail", e.getMessage());
+        } catch (NullPointerException e) {
+            log.info("경기에 회원 출석처리에 실패하였습니다 - 요청자 : {}, 경기 고유 번호 : {}, 실패 사유 : {}", user.getUsername(), form.getEventId(), e.getMessage());
+            return new MemberEventResult.Attend("fail", "위치 정보를 가져오는데 실패하였습니다.");
         }
     }
 
