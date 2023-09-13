@@ -1,10 +1,7 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.repository;
 
 import jakarta.persistence.EntityManager;
-import kr.co.seulchuksaeng.seulchuksaengweb.domain.Event;
-import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
-import kr.co.seulchuksaeng.seulchuksaengweb.domain.MemberEvent;
-import kr.co.seulchuksaeng.seulchuksaengweb.domain.PurchaseStatus;
+import kr.co.seulchuksaeng.seulchuksaengweb.domain.*;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.NoEventMemberException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
@@ -46,8 +43,9 @@ public class EventMemberRepository {
     // 해당 경기에 참여하지 않는 인원을 조회한다.
     public List<Member> getNonParticipatingMembers(Event event) {
         return entityManager.createQuery(
-                        "SELECT m FROM Member m LEFT JOIN MemberEvent me ON m = me.member AND me.event = :event WHERE me.event IS NULL", Member.class)
+                        "SELECT m FROM Member m LEFT JOIN MemberEvent me ON m = me.member AND me.event = :event WHERE me.event IS NULL AND m.gender = :gender", Member.class)
                 .setParameter("event", event)
+                .setParameter("gender", event.getGender()) // gender 파라미터 추가
                 .getResultList();
     }
 

@@ -43,11 +43,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             SecurityContextHolder.getContext().setAuthentication(authenticated);
 
             filterChain.doFilter(request, response);
-        } catch (ExpiredTokenException e) {
+        } catch (ExpiredTokenException  | ModulatedTokenException e) {
             logger.info(e.getMessage());
-            sendError(response, HttpStatus.UNAUTHORIZED, new NetworkError("fail",e.getMessage()));
-        } catch (ModulatedTokenException e) {
-            logger.warn(e.getMessage());
             sendError(response, HttpStatus.UNAUTHORIZED, new NetworkError("fail",e.getMessage()));
         }
     }
@@ -60,10 +57,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     public String parseBearerToken(HttpServletRequest request) {
-        return Optional.ofNullable(request.getHeader(HttpHeaders.AUTHORIZATION))
-                .filter(token -> token.substring(0, 7).equalsIgnoreCase("Bearer "))
-                .map(token -> token.substring(7))
-                .orElse(null);
+        try {
+            return Optional.ofNullable(request.getHeader(HttpHeaders.AUTHORIZATION))
+                    .filter(token -> token.substring(0, 7).equalsIgnoreCase("Bearer "))
+                    .map(token -> token.substring(7))
+                    .orElse(null);
+        } catch (Exception e) {
+            throw new ModulatedTokenException();
+        }
     }
 
     public User parseUserSpecification(String token) {

@@ -20,6 +20,10 @@ public class Event {
 
     private String description;
 
+    private Double latitude;
+
+    private Double longitude;
+
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
@@ -35,10 +39,12 @@ public class Event {
     @JoinColumn(name = "create_member")
     private Member createMember;
 
-    public Event(String title, String location, String description, Gender gender, LocalDateTime startTime, LocalDateTime endTime, String money, Member createMember) {
+    public Event(String title, String location, String description, Double latitude, Double longitude, Gender gender, LocalDateTime startTime, LocalDateTime endTime, String money, Member createMember) {
         this.title = title;
         this.location = location;
         this.description = description;
+        this.latitude = latitude;
+        this.longitude = longitude;
         this.gender = gender;
         this.startTime = startTime;
         this.endTime = endTime;
@@ -59,6 +65,11 @@ public class Event {
         this.startTime = startTime;
         this.endTime = endTime;
         this.money = money;
+    }
+
+    public void updateLocation(Double y, Double x) {
+        this.latitude = y;
+        this.longitude = x;
     }
 
 }
