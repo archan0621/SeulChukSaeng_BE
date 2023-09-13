@@ -7,6 +7,7 @@ import kr.co.seulchuksaeng.seulchuksaengweb.domain.Event;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Gender;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.AddressResponse;
+import kr.co.seulchuksaeng.seulchuksaengweb.dto.LocationResponse;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.EventForm;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.EventResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventReadInnerResult;
@@ -14,6 +15,7 @@ import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventShowcase
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.NetworkException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.NoEventException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.NotValidAddressException;
+import kr.co.seulchuksaeng.seulchuksaengweb.httpProvider.NaverMapApiProvider;
 import kr.co.seulchuksaeng.seulchuksaengweb.repository.EventRepository;
 import kr.co.seulchuksaeng.seulchuksaengweb.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -38,21 +40,16 @@ public class EventService {
 
     private final MemberRepository memberRepository;
     private final EventRepository eventRepository;
-
-    @Value("${mapApi.Secret}")
-    private String mapApiSecret;
-
-    @Value("${mapApi.Id}")
-    private String mapApiId;
+    private final NaverMapApiProvider naverMapApiProvider;
 
     @Transactional
     public void create(EventForm.Create ef, String id) {
 
-        checkLocation(ef);
+        LocationResponse locationResponse = naverMapApiProvider.checkLocation(ef.location());//주소가 유효한지 확인
 
         Member member = memberRepository.findMemberById(id);
 
-        Event event = new Event(ef.getTitle(), ef.getLocation(), ef.getDescription(), ef.getGender(), ef.getStartTime(), ef.getEndTime(), ef.getMoney(), member);
+        Event event = new Event(ef.title(), ef.location(), ef.description(), locationResponse.getY(), locationResponse.getX(), ef.gender(), ef.startTime(), ef.endTime(), ef.money(), member);
 
         eventRepository.save(event);
 
@@ -103,6 +100,12 @@ public class EventService {
     @Transactional
     public void update(EventForm.Update form) {
         Event event = eventRepository.findEventById(Long.valueOf(form.getEventId()));
+        if(!event.getLocation().equals(form.getLocation())) { //만약 주소가 변경되었다면
+            LocationResponse locationResponse = naverMapApiProvider.checkLocation(form.getLocation());//주소가 유효한지 확인
+            event.update(form.getTitle(), form.getLocation(), form.getDescription(), form.getGender(), form.getStartTime(), form.getEndTime(), form.getMoney());
+            event.updateLocation(locationResponse.getY(), locationResponse.getX());
+            return;
+        }
         event.update(form.getTitle(), form.getLocation(), form.getDescription(), form.getGender(), form.getStartTime(), form.getEndTime(), form.getMoney());
     }
 
@@ -111,52 +114,5 @@ public class EventService {
         Event event = eventRepository.findEventById(Long.valueOf(eventId));
         eventRepository.delete(event);
     }
-
-    public void checkLocation(EventForm.Create ef) {
-
-        WebClient webClient = WebClient.builder()
-                .baseUrl("https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode")
-                .defaultHeader("X-NCP-APIGW-API-KEY-ID", mapApiId)
-                .defaultHeader("X-NCP-APIGW-API-KEY", mapApiSecret)
-                .build();
-
-        Mono<ResponseEntity<String>> responseMono = webClient
-                .get()
-                .uri(uriBuilder -> uriBuilder
-                        .queryParam("query", ef.getLocation())
-                        .build())
-                .retrieve()
-                .toEntity(String.class);
-
-        // 응답 처리
-        ResponseEntity<String> responseEntity = responseMono.block();
-        if (responseEntity == null) {
-            throw new NetworkException();
-        }
-
-        HttpStatusCode httpStatus = responseEntity.getStatusCode();
-        if (httpStatus != HttpStatus.OK) {
-            throw new NetworkException();
-        }
-
-        String responseBody = responseEntity.getBody();
-        if (responseBody != null && !responseBody.isEmpty()) {
-            ObjectMapper objectMapper = new ObjectMapper();
-
-            AddressResponse addressResponse = null;
-            try {
-                addressResponse = objectMapper.readValue(responseBody, AddressResponse.class);
-            } catch (JsonProcessingException e) {
-                throw new NetworkException();
-            }
-
-            if (addressResponse.getMeta().getTotalCount() == 0) {
-                    throw new NotValidAddressException();
-            }
-        } else {
-            throw new NotValidAddressException();
-        }
-    }
-
 
 }

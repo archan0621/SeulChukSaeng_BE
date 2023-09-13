@@ -1,70 +1,79 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Getter;
+
+import java.util.List;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class AddressResponse {
+    @Getter
     private String status;
+    @Getter
     private Meta meta;
-    private Address[] addresses;
+    private List<Address> addresses;
+    @Getter
     private String errorMessage;
 
-    public String getStatus() {
-        return status;
+    public AddressResponse() {
     }
+
+    // Getter와 Setter 메서드들
 
     public void setStatus(String status) {
         this.status = status;
-    }
-
-    public Meta getMeta() {
-        return meta;
     }
 
     public void setMeta(Meta meta) {
         this.meta = meta;
     }
 
-    public Address[] getAddresses() {
+    @JsonProperty("addresses")
+    public List<Address> getAddresses() {
         return addresses;
     }
 
-    public void setAddresses(Address[] addresses) {
+    @JsonProperty("addresses")
+    public void setAddresses(List<Address> addresses) {
         this.addresses = addresses;
-    }
-
-    public String getErrorMessage() {
-        return errorMessage;
     }
 
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
 
+    @Getter
     @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Meta {
         private int totalCount;
+        private int page;
         private int count;
 
-        public int getTotalCount() {
-            return totalCount;
-        }
+        // Getter와 Setter 메서드들
+    }
 
-        public void setTotalCount(int totalCount) {
-            this.totalCount = totalCount;
-        }
+    @Getter
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public static class Address {
+        private String roadAddress;
+        private String jibunAddress;
+        private String englishAddress;
+        private List<AddressElement> addressElements;
+        private String x;
+        private String y;
+        private double distance;
 
-        public int getCount() {
-            return count;
-        }
-
-        public void setCount(int count) {
-            this.count = count;
-        }
+        // Getter와 Setter 메서드들
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
-    public static class Address {
-        // Address 객체의 필드를 정의해야 합니다.
+    public static class AddressElement {
+        private List<String> types;
+        private String longName;
+        private String shortName;
+        private String code;
+
+        // Getter와 Setter 메서드들
     }
 }

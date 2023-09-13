@@ -8,6 +8,8 @@ public class MemberEventForm {
     @Getter
     public static class Attend {
         private String eventId;
+        private String lat;
+        private String lng;
     }
 
     @Getter
