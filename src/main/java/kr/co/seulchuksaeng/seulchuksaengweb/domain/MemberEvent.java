@@ -1,16 +1,19 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.domain;
 
 import jakarta.persistence.*;
+import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.EventAlreadyEndedException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.AlreadyAttendException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.AlreadyPurchasedException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.EventNotStartException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.WatingPurchaseException;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
 
 @Entity @Getter
+@Slf4j
 public class MemberEvent {
 
     @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -40,30 +43,37 @@ public class MemberEvent {
 
     public Attendance attend() {
 
-        if (this.attend == Attendance.ATTEND || this.attend == Attendance.LATE) { //이미 출결한 상태인 경우 예외 발생
+        if (this.attend == Attendance.ATTEND || this.attend == Attendance.LATE) { // 이미 출결한 상태인 경우 예외 발생
             throw new AlreadyAttendException();
         }
 
-        //현재 시간과 경기 시작 시작 비교 후 참여 상태를 결정
+        // 현재 시간과 경기 시작 시간 비교 후 참여 상태를 결정
         LocalDateTime currentTime = LocalDateTime.now();
         LocalDateTime eventStartTime = event.getStartTime();
+        LocalDateTime eventEndTime = event.getEndTime(); // 경기 종료 시간 추가
 
         // 두 시간 간의 차이 계산
-        Duration timeDifference = Duration.between(eventStartTime, currentTime);
+        Duration timeDifferenceStart = Duration.between(eventStartTime, currentTime);
+        Duration timeDifferenceEnd = Duration.between(eventEndTime, currentTime);
 
-        //경기 시작 1시간 전에 요청하면 예외처리
-        if (timeDifference.toMinutes() <= -60) {
+        // 경기 시작 1시간 전에 요청하면 예외처리
+        if (timeDifferenceStart.toMinutes() <= -60) {
             throw new EventNotStartException();
         }
 
+        // 현재 시간이 경기 종료 시간을 지났으면 예외처리
+        if (timeDifferenceEnd.toMinutes() >= 0) {
+            throw new EventAlreadyEndedException();
+        }
+
         // 20분 이상 늦으면 지각 처리
-        if (timeDifference.toMinutes() >= 20) {
+        if (timeDifferenceStart.toMinutes() >= 20) {
             this.attend = Attendance.LATE;
             return Attendance.LATE;
-        } else {
-            this.attend = Attendance.ATTEND;
-            return Attendance.ATTEND;
         }
+
+        this.attend = Attendance.ATTEND;
+        return Attendance.ATTEND;
     }
 
     public void purchaseRequest() {
