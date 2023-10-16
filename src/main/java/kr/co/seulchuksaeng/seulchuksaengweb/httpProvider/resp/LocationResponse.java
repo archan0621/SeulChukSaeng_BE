@@ -1,4 +1,4 @@
-package kr.co.seulchuksaeng.seulchuksaengweb.dto;
+package kr.co.seulchuksaeng.seulchuksaengweb.httpProvider.resp;
 
 import lombok.Getter;
 import lombok.Setter;
