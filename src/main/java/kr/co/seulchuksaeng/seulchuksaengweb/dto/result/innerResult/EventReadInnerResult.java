@@ -6,24 +6,14 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-@Getter
 @Builder
-public class EventReadInnerResult {
-
-    private Long eventId;
-
-    private String title;
-
-    private Gender gender;
-
-    private String money;
-
-    private String description;
-
-    private LocalDateTime startTime;
-
-    private LocalDateTime endTime;
-
-    private String location;
-
-}
+public record EventReadInnerResult(
+        Long eventId,
+        String title,
+        Gender gender,
+        String money,
+        String description,
+        LocalDateTime startTime,
+        LocalDateTime endTime,
+        String location
+) {}

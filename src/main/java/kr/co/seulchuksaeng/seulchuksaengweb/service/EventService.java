@@ -1,34 +1,22 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.NoResultException;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Event;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Gender;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
-import kr.co.seulchuksaeng.seulchuksaengweb.dto.AddressResponse;
-import kr.co.seulchuksaeng.seulchuksaengweb.dto.LocationResponse;
+import kr.co.seulchuksaeng.seulchuksaengweb.httpProvider.resp.LocationResponse;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.EventForm;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.EventResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventReadInnerResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventShowcaseInnerResult;
-import kr.co.seulchuksaeng.seulchuksaengweb.exception.NetworkException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.NoEventException;
-import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.NotValidAddressException;
 import kr.co.seulchuksaeng.seulchuksaengweb.httpProvider.NaverMapApiProvider;
 import kr.co.seulchuksaeng.seulchuksaengweb.repository.EventRepository;
 import kr.co.seulchuksaeng.seulchuksaengweb.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.autoconfigure.web.reactive.function.client.WebClientAutoConfiguration;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.reactive.function.client.WebClient;
-import reactor.core.publisher.Mono;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -99,14 +87,14 @@ public class EventService {
 
     @Transactional
     public void update(EventForm.Update form) {
-        Event event = eventRepository.findEventById(Long.valueOf(form.getEventId()));
-        if(!event.getLocation().equals(form.getLocation())) { //만약 주소가 변경되었다면
-            LocationResponse locationResponse = naverMapApiProvider.checkLocation(form.getLocation());//주소가 유효한지 확인
-            event.update(form.getTitle(), form.getLocation(), form.getDescription(), form.getGender(), form.getStartTime(), form.getEndTime(), form.getMoney());
+        Event event = eventRepository.findEventById(Long.valueOf(form.eventId()));
+        if(!event.getLocation().equals(form.location())) { //만약 주소가 변경되었다면
+            LocationResponse locationResponse = naverMapApiProvider.checkLocation(form.location());//주소가 유효한지 확인
+            event.update(form.title(), form.location(), form.description(), form.gender(), form.startTime(), form.endTime(), form.money());
             event.updateLocation(locationResponse.getY(), locationResponse.getX());
             return;
         }
-        event.update(form.getTitle(), form.getLocation(), form.getDescription(), form.getGender(), form.getStartTime(), form.getEndTime(), form.getMoney());
+        event.update(form.title(), form.location(), form.description(), form.gender(), form.startTime(), form.endTime(), form.money());
     }
 
     @Transactional

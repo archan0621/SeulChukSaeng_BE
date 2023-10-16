@@ -35,14 +35,14 @@ public class MemberController {
     @LogExecutionTime
     @PostMapping("/join") //회원가입 ENDPOINT
     public MemberResult.Join join(@RequestBody MemberForm.Join joinForm) {
-        log.info("회원가입 요청이 발생하였습니다 - 닉네임 : {}", joinForm.getName());
+        log.info("회원가입 요청이 발생하였습니다 - 닉네임 : {}", joinForm.name());
         try {
             memberService.verifiedMemberJoin(joinForm, verifyCode);
             Long joinId = memberService.join(joinForm);
-            log.info("회원가입 성공하였습니다 - 닉네임 : {}", joinForm.getName());
+            log.info("회원가입 성공하였습니다 - 닉네임 : {}", joinForm.name());
             return new MemberResult.Join("success", "회원가입 성공");
         } catch (ExistMemberException | UnverifiedJoinException e) { // 이미 멤버가 존재하거나, 인증코드가 맞지 않은 예외가 발생할 수 있음
-            log.info("회원가입 실패하였습니다 - 닉네임 : {}, 실패 사유 : {}", joinForm.getName(), e.getMessage());
+            log.info("회원가입 실패하였습니다 - 닉네임 : {}, 실패 사유 : {}", joinForm.name(), e.getMessage());
             return new MemberResult.Join("fail", e.getMessage());
         }
     }
@@ -50,13 +50,13 @@ public class MemberController {
     @LogExecutionTime
     @PostMapping("/login") //로그인 ENDPOINT
     public MemberResult.Login login(@RequestBody MemberForm.Login loginForm) {
-        log.info("로그인 요청이 발생하였습니다 - 아이디 : {}", loginForm.getLoginId());
+        log.info("로그인 요청이 발생하였습니다 - 아이디 : {}", loginForm.loginId());
         try {
             String jwtToken = memberService.login(loginForm);
-            log.info("로그인 성공하였습니다 - 아이디 : {}", loginForm.getLoginId());
+            log.info("로그인 성공하였습니다 - 아이디 : {}", loginForm.loginId());
             return new MemberResult.Login("success", "로그인 성공", jwtToken);
         } catch (UserNotFoundException | WrongPasswordException e) { // 멤머가 존재하지 않거나 비밀번호가 일치하지 않는 예외가 발생할 수 있음
-            log.info("로그인 실패하였습니다 - 아이디 : {}, 실패 사유 : {}", loginForm.getLoginId(), e.getMessage());
+            log.info("로그인 실패하였습니다 - 아이디 : {}, 실패 사유 : {}", loginForm.loginId(), e.getMessage());
             return new MemberResult.Login("fail", e.getMessage(), null);
         }
     }
