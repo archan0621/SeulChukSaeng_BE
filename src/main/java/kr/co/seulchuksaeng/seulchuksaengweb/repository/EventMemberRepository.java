@@ -20,14 +20,20 @@ public class EventMemberRepository {
         entityManager.persist(memberEvent);
     }
 
-    public List<Member> getAllMemberList(Event event) {
-        List<MemberEvent> resultList = entityManager.createQuery("select me from MemberEvent me where me.event = :event", MemberEvent.class)
+//    public List<Member> getAllMemberList(Event event) {
+//        List<MemberEvent> resultList = entityManager.createQuery("select me from MemberEvent me where me.event = :event", MemberEvent.class)
+//                .setParameter("event", event)
+//                .getResultList();
+//
+//        return resultList.stream()
+//                .map(MemberEvent::getMember)
+//                .collect(Collectors.toList());
+//    }
+
+    public List<MemberEvent> getAllMemberList(Event event) {
+        return entityManager.createQuery("select me from MemberEvent me where me.event = :event", MemberEvent.class)
                 .setParameter("event", event)
                 .getResultList();
-
-        return resultList.stream()
-                .map(MemberEvent::getMember)
-                .collect(Collectors.toList());
     }
 
     // event와 member를 파라미터로 받아서 event에 member가 포함되어 있는지 확인
