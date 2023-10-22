@@ -2,9 +2,8 @@ package kr.co.seulchuksaeng.seulchuksaengweb.httpProvider;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import kr.co.seulchuksaeng.seulchuksaengweb.dto.AddressResponse;
-import kr.co.seulchuksaeng.seulchuksaengweb.dto.LocationResponse;
-import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.EventForm;
+import kr.co.seulchuksaeng.seulchuksaengweb.httpProvider.resp.AddressResponse;
+import kr.co.seulchuksaeng.seulchuksaengweb.httpProvider.resp.LocationResponse;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.NetworkException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.NotValidAddressException;
 import org.springframework.beans.factory.annotation.Value;

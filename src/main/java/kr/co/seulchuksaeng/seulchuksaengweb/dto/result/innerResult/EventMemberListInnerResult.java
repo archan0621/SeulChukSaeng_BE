@@ -1,17 +1,12 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult;
 
+import kr.co.seulchuksaeng.seulchuksaengweb.domain.Attendance;
+import kr.co.seulchuksaeng.seulchuksaengweb.domain.PurchaseStatus;
 import lombok.Getter;
 
-@Getter
-public class EventMemberListInnerResult {
-
-    private String memberId;
-
-    private String memberName;
-
-    public EventMemberListInnerResult(String memberId, String memberName) {
-        this.memberId = memberId;
-        this.memberName = memberName;
-    }
-
-}
+public record EventMemberListInnerResult(
+        String memberId,
+        String memberName,
+        Attendance attendance,
+        PurchaseStatus purchaseStatus
+) {}

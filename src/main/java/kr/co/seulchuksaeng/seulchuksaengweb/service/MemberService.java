@@ -32,51 +32,47 @@ public class MemberService {
 
         //비밀번호 암호화
         String salt = crypto.getSalt();
-        String saltPassword = crypto.saltPassword(joinForm.getPassword(), salt);
+        String saltPassword = crypto.saltPassword(joinForm.password(), salt);
 
         // 암호화한 정보로 회원 저장
-        Member member = new Member(joinForm.getId(), saltPassword, joinForm.getName(), joinForm.getPhone(), joinForm.getGender(), UserRole.USER, salt, 0);
+        Member member = new Member(joinForm.id(), saltPassword, joinForm.name(), joinForm.phone(), joinForm.gender(), UserRole.USER, salt, 0);
         memberRepository.save(member);
 
         return member.getMemberId();
     }
 
     public String login(MemberForm.Login loginForm) {
-        Member member = new Member();
-
-        //회원 존재 여부 확인
         try {
-            member = memberRepository.findMemberById(loginForm.getLoginId());
+            //회원 존재 여부 확인
+            Member member = memberRepository.findMemberById(loginForm.loginId());
+
+            //회원이 있다면 비밀번호 암호화
+            String saltPassword = crypto.saltPassword(loginForm.password(), member.getSalt());
+
+            //비밀번호 일치 여부 확인
+            if(!Objects.equals(saltPassword, member.getPassword())) {
+                throw new WrongPasswordException();
+            }
+
+            // 회원 존재 및 비밀번호 일치 확인시 JWT 토큰 발급
+            return tokenProvider.createToken(String.format("%s:%s", member.getId(), member.getRole()));
         } catch (IndexOutOfBoundsException e) {
             throw new UserNotFoundException();
         }
-
-        //회원이 있다면 비밀번호 암호화
-        String saltPassword = crypto.saltPassword(loginForm.getPassword(), member.getSalt());
-
-        //비밀번호 일치 여부 확인
-        if(!Objects.equals(saltPassword, member.getPassword())) {
-            throw new WrongPasswordException();
-        }
-
-        // 회원 존재 및 비밀번호 일치 확인시 JWT 토큰 발급
-        return tokenProvider.createToken(String.format("%s:%s", member.getId(), member.getRole()));
     }
 
 
     private void validateDuplicateMember(MemberForm.Join joinForm) {
         //EXCEPTION
         try {
-            Member member = memberRepository.findMemberById(joinForm.getId());
+            Member member = memberRepository.findMemberById(joinForm.id());
             throw new ExistMemberException();
-        } catch (UserNotFoundException e) {
-            return;
-        }
+        } catch (UserNotFoundException ignored) { } //UserNotFoundException이 정상인 상황
     }
 
     public void verifiedMemberJoin(MemberForm.Join joinForm, String verifyCode) {
         //회원 인증코드 검증
-        String verifyCodeUser = joinForm.getVerifyCode();
+        String verifyCodeUser = joinForm.verifyCode();
         if (!Objects.equals(verifyCode, verifyCodeUser)) {
             log.info("현재 인증코드 : {}, 입력받은 인증코드 : {} - 회원가입 거부", verifyCode, verifyCodeUser);
             throw new UnverifiedJoinException();

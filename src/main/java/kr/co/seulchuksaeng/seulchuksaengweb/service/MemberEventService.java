@@ -35,7 +35,7 @@ public class MemberEventService {
         Event event = eventRepository.findEventById(Long.valueOf(eventId));
 
         eventMemberRepository.getNonParticipatingMembers(event).forEach(member -> {
-            list.add(new EventMemberListInnerResult(member.getId(), member.getName()));
+            list.add(new EventMemberListInnerResult(member.getId(), member.getName(), null, null));
         });
 
         return list;
@@ -44,10 +44,10 @@ public class MemberEventService {
     @Transactional
     public List<EventMemberListInnerResult> playingMemberList(String eventId) {
         Event event = eventRepository.findEventById(Long.valueOf(eventId));
-        List<Member> allMemberList = eventMemberRepository.getAllMemberList(event);
+        List<MemberEvent> allMemberList = eventMemberRepository.getAllMemberList(event);
 
         return allMemberList.stream()
-                .map(member -> new EventMemberListInnerResult(member.getId(), member.getName()))
+                .map(memberEvent -> new EventMemberListInnerResult(memberEvent.getMember().getId(), memberEvent.getMember().getName(), memberEvent.getAttend(), memberEvent.getPurchased()))
                 .collect(Collectors.toList());
     }
 
@@ -81,7 +81,7 @@ public class MemberEventService {
         Member member = memberRepository.findMemberById(memberId);
         MemberEvent memberEvent = eventMemberRepository.findMemberEventByMemberAndEvent(member, event);
 
-        if (distanceCalc.calculateDistance(event.getLatitude(), event.getLongitude(), latitude, longitude) > 200) {
+        if (distanceCalc.calculateDistance(event.getLatitude(), event.getLongitude(), latitude, longitude) > 300) {
             throw new FarFromLocationException();
         }
 
@@ -106,7 +106,7 @@ public class MemberEventService {
     public List<EventMemberListInnerResult> purchaseRequestList(String eventId) {
         Event event = eventRepository.findEventById(Long.valueOf(eventId));
         return eventMemberRepository.getPurchaseRequestList(event).stream()
-                .map(member -> new EventMemberListInnerResult(member.getId(), member.getName()))
+                .map(member -> new EventMemberListInnerResult(member.getId(), member.getName(),null, null))
                 .collect(Collectors.toList());
     }
 

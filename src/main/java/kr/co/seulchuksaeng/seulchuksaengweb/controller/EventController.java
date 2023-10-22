@@ -32,13 +32,13 @@ public class EventController {
     @AdminAuthorize
     @PostMapping("/create")
     public EventResult.Create createEvent(@RequestBody EventForm.Create eventCreateForm, @AuthenticationPrincipal User user) {
-        log.info("경기 생성 요청이 발생하였습니다 - 요청자 : {}, 경기 제목 : {}", user.getUsername(), eventCreateForm.getTitle());
+        log.info("경기 생성 요청이 발생하였습니다 - 요청자 : {}, 경기 제목 : {}", user.getUsername(), eventCreateForm.title());
         try {
             eventService.create(eventCreateForm, user.getUsername());
-            log.info("경기 생성에 성공하였습니다 - 요청자 : {}, 경기 제목 : {}", user.getUsername(), eventCreateForm.getTitle());
+            log.info("경기 생성에 성공하였습니다 - 요청자 : {}, 경기 제목 : {}", user.getUsername(), eventCreateForm.title());
             return new EventResult.Create("success", "경기 생성에 성공하였습니다");
         } catch (Exception e) { //특정 예외가 예상되지 않지만 불안하니까 일단 예외처리, 추후 테스트 단계에서 수정예정
-            log.info("경기 생성에 실패하였습니다 - 요청자 : {}, 경기 제목 : {},실패 사유 : {}", user.getUsername(), eventCreateForm.getTitle(), e.getMessage());
+            log.info("경기 생성에 실패하였습니다 - 요청자 : {}, 경기 제목 : {},실패 사유 : {}", user.getUsername(), eventCreateForm.title(), e.getMessage());
             return new EventResult.Create("fail", e.getMessage());
         }
     }
@@ -70,13 +70,13 @@ public class EventController {
     @LogExecutionTime
     @PostMapping("/read")
     public EventResult.Read readEvent(@RequestBody EventForm.Read eventReadForm, @AuthenticationPrincipal User user) {
-        log.info("경기 조회 요청이 발생하였습니다 - 요청자 : {}, 경기 고유번호 : {}", user.getUsername(), eventReadForm.getEventId());
+        log.info("경기 조회 요청이 발생하였습니다 - 요청자 : {}, 경기 고유번호 : {}", user.getUsername(), eventReadForm.eventId());
         try {
-            EventReadInnerResult result = eventService.read(eventReadForm.getEventId());
-            log.info("경기 조회에 성공하였습니다 - 요청자 : {}, 경기 고유번호 : {}", user.getUsername(), eventReadForm.getEventId());
+            EventReadInnerResult result = eventService.read(eventReadForm.eventId());
+            log.info("경기 조회에 성공하였습니다 - 요청자 : {}, 경기 고유번호 : {}", user.getUsername(), eventReadForm.eventId());
             return new EventResult.Read("success", "경기 조회에 성공하였습니다", result);
         } catch (NoEventException e) {
-            log.info("경기 조회에 실패하였습니다 - 요청자 : {}, 경기 고유번호 : {}, 실패 사유 : {}", user.getUsername(), eventReadForm.getEventId(), e.getMessage());
+            log.info("경기 조회에 실패하였습니다 - 요청자 : {}, 경기 고유번호 : {}, 실패 사유 : {}", user.getUsername(), eventReadForm.eventId(), e.getMessage());
             return new EventResult.Read("fail", e.getMessage(), null);
         }
         
@@ -86,13 +86,13 @@ public class EventController {
     @LogExecutionTime
     @PostMapping("/update")
     public EventResult.Update updateEvent(@RequestBody EventForm.Update form, @AuthenticationPrincipal User user) {
-        log.info("경기 내용 수정 요청이 발생하였습니다 - 요청자 : {}, 경기 제목 : {}", user.getUsername(), form.getTitle());
+        log.info("경기 내용 수정 요청이 발생하였습니다 - 요청자 : {}, 경기 제목 : {}", user.getUsername(), form.title());
         try {
             eventService.update(form);
-            log.info("경기 내용 수정에 성공하였습니다 - 요청자 : {}, 경기 제목 : {}", user.getUsername(), form.getTitle());
+            log.info("경기 내용 수정에 성공하였습니다 - 요청자 : {}, 경기 제목 : {}", user.getUsername(), form.title());
             return new EventResult.Update("success", "경기 내용 수정에 성공하였습니다");
         } catch (NoEventException e) {
-            log.info("경기 내용 수정에 실패하였습니다 - 요청자 : {}, 경기 제목 : {}, 실패 사유 : {}", user.getUsername(), form.getTitle(), e.getMessage());
+            log.info("경기 내용 수정에 실패하였습니다 - 요청자 : {}, 경기 제목 : {}, 실패 사유 : {}", user.getUsername(), form.title(), e.getMessage());
             return new EventResult.Update("fail", e.getMessage());
         }
     }
@@ -101,13 +101,13 @@ public class EventController {
     @LogExecutionTime
     @PostMapping("/remove")
     public EventResult.Remove removeEvent(@RequestBody EventForm.Remove form, @AuthenticationPrincipal User user) {
-        log.info("경기 삭제 요청이 발생하였습니다 - 요청자 : {}, 경기 고유번호 : {}", user.getUsername(), form.getEventId());
+        log.info("경기 삭제 요청이 발생하였습니다 - 요청자 : {}, 경기 고유번호 : {}", user.getUsername(), form.eventId());
         try {
-            eventService.remove(form.getEventId());
-            log.info("경기 삭제에 성공하였습니다 - 요청자 : {}, 경기 고유번호 : {}", user.getUsername(), form.getEventId());
+            eventService.remove(form.eventId());
+            log.info("경기 삭제에 성공하였습니다 - 요청자 : {}, 경기 고유번호 : {}", user.getUsername(), form.eventId());
             return new EventResult.Remove("success", "경기 삭제에 성공하였습니다");
         } catch (NoEventException e) {
-            log.info("경기 삭제에 실패하였습니다 - 요청자 : {}, 경기 고유번호 : {}, 실패 사유 : {}", user.getUsername(), form.getEventId(), e.getMessage());
+            log.info("경기 삭제에 실패하였습니다 - 요청자 : {}, 경기 고유번호 : {}, 실패 사유 : {}", user.getUsername(), form.eventId(), e.getMessage());
             return new EventResult.Remove("fail", e.getMessage());
         }
     }

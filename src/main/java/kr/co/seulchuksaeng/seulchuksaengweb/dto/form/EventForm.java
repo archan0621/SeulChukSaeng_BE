@@ -5,72 +5,14 @@ import lombok.Getter;
 
 import java.time.LocalDateTime;
 
-public class EventForm {
+public record EventForm() {
 
-    @Getter
-    public static class Create {
+    public record Create (String title, String location, Gender gender, String money, LocalDateTime startTime, LocalDateTime endTime, String description) {}
 
-        private String title;
+    public record Read (Long eventId) {}
 
-        private String location;
+    public record Remove (String eventId) {}
 
-        private Gender gender;
-
-        private String money;
-
-        private LocalDateTime startTime;
-
-        private LocalDateTime endTime;
-
-        private String description;
-
-    }
-
-    @Getter
-    public static class Read {
-
-        private Long eventId;
-
-        public Read(Long eventId) {
-            this.eventId = eventId;
-        }
-
-        public Read() {} // 없으면 cannot deserialize from Object value (no delegate- or property-based Creator) 에러 발생
-
-    }
-
-    @Getter
-    public static class Remove {
-
-        private String eventId;
-
-        public Remove(String eventId) {
-            this.eventId = eventId;
-        }
-
-        public Remove() {}
-    }
-
-    @Getter
-    public static class Update {
-
-        private String eventId;
-
-        private String title;
-
-        private String location;
-
-        private Gender gender;
-
-        private String money;
-
-        private LocalDateTime startTime;
-
-        private LocalDateTime endTime;
-
-        private String description;
-
-    }
-
+    public record Update (String eventId, String title, String location, Gender gender, String money, LocalDateTime startTime, LocalDateTime endTime, String description) {}
 
 }

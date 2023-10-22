@@ -1,6 +1,7 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.repository;
 
 import jakarta.persistence.EntityManager;
+import kr.co.seulchuksaeng.seulchuksaengweb.annotation.LogExecutionTime;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
