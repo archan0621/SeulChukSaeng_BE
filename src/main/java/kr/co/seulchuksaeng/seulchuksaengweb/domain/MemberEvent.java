@@ -66,8 +66,8 @@ public class MemberEvent {
             throw new EventAlreadyEndedException();
         }
 
-        // 20분 이상 늦으면 지각 처리
-        if (timeDifferenceStart.toMinutes() >= 20) {
+        // 늦으면 지각 처리
+        if (timeDifferenceStart.toMinutes() >= 0) {
             this.attend = Attendance.LATE;
             return Attendance.LATE;
         }
