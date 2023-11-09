@@ -1,6 +1,8 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult;
 
+import kr.co.seulchuksaeng.seulchuksaengweb.domain.Attendance;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Gender;
+import kr.co.seulchuksaeng.seulchuksaengweb.domain.PurchaseStatus;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -15,5 +17,7 @@ public record EventReadInnerResult(
         String description,
         LocalDateTime startTime,
         LocalDateTime endTime,
-        String location
+        String location,
+        Attendance attend,
+        PurchaseStatus purchaseStatus
 ) {}

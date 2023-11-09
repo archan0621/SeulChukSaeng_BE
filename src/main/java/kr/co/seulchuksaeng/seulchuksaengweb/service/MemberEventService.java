@@ -81,7 +81,7 @@ public class MemberEventService {
         Member member = memberRepository.findMemberById(memberId);
         MemberEvent memberEvent = eventMemberRepository.findMemberEventByMemberAndEvent(member, event);
 
-        if (distanceCalc.calculateDistance(event.getLatitude(), event.getLongitude(), latitude, longitude) > 300) {
+        if (distanceCalc.calculateDistance(event.getLatitude(), event.getLongitude(), latitude, longitude) > 400) {
             throw new FarFromLocationException();
         }
 

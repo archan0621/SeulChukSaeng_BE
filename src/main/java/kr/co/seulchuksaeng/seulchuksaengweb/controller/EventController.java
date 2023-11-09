@@ -8,6 +8,8 @@ import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.*;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.*;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventReadInnerResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.NoEventException;
+import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.NotValidAddressException;
+import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.ParticipantGenderChangeException;
 import kr.co.seulchuksaeng.seulchuksaengweb.repository.MemberRepository;
 import kr.co.seulchuksaeng.seulchuksaengweb.service.EventService;
 import lombok.RequiredArgsConstructor;
@@ -72,7 +74,7 @@ public class EventController {
     public EventResult.Read readEvent(@RequestBody EventForm.Read eventReadForm, @AuthenticationPrincipal User user) {
         log.info("경기 조회 요청이 발생하였습니다 - 요청자 : {}, 경기 고유번호 : {}", user.getUsername(), eventReadForm.eventId());
         try {
-            EventReadInnerResult result = eventService.read(eventReadForm.eventId());
+            EventReadInnerResult result = eventService.read(eventReadForm.eventId(), user.getUsername());
             log.info("경기 조회에 성공하였습니다 - 요청자 : {}, 경기 고유번호 : {}", user.getUsername(), eventReadForm.eventId());
             return new EventResult.Read("success", "경기 조회에 성공하였습니다", result);
         } catch (NoEventException e) {
@@ -91,7 +93,7 @@ public class EventController {
             eventService.update(form);
             log.info("경기 내용 수정에 성공하였습니다 - 요청자 : {}, 경기 제목 : {}", user.getUsername(), form.title());
             return new EventResult.Update("success", "경기 내용 수정에 성공하였습니다");
-        } catch (NoEventException e) {
+        } catch (NoEventException | ParticipantGenderChangeException | NotValidAddressException e) {
             log.info("경기 내용 수정에 실패하였습니다 - 요청자 : {}, 경기 제목 : {}, 실패 사유 : {}", user.getUsername(), form.title(), e.getMessage());
             return new EventResult.Update("fail", e.getMessage());
         }
