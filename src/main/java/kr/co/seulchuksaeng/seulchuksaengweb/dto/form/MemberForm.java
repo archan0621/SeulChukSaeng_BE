@@ -9,4 +9,6 @@ public record MemberForm() {
 
     public record Login (String loginId, String password) {}
 
+    public record Detail(Long memberId) {}
+
 }

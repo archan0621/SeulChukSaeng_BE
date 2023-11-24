@@ -17,6 +17,10 @@ public record MemberEventForm() {
 
     public record PurchaseCheck(String eventId, String memberId) {}
 
+    public record MemberEventDetail(String eventId, Long memberId) {}
+
+    public record ForceAttend(String eventId, Long memberId) {}
+
     public record List(String eventId, Gender gender) {
         public List {}
 

@@ -117,4 +117,18 @@ public class MemberEventService {
         MemberEvent memberEvent = eventMemberRepository.findMemberEventByMemberAndEvent(member, event);
         memberEvent.purchaseCheck();
     }
+
+    public MemberEvent getMemberEvent(String eventId, Long memberId) {
+        Member member = memberRepository.findMemberByPK(memberId);
+        Event event = eventRepository.findEventById(Long.valueOf(eventId));
+        return eventMemberRepository.findMemberEventByMemberAndEvent(member, event);
+    }
+
+    @Transactional
+    public void forceAttend(String eventId, Long memberId) {
+        Event event = eventRepository.findEventById(Long.valueOf(eventId));
+        Member member = memberRepository.findMemberByPK(memberId);
+        MemberEvent memberEvent = eventMemberRepository.findMemberEventByMemberAndEvent(member, event);
+        memberEvent.forceAttend();
+    }
 }

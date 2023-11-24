@@ -20,16 +20,6 @@ public class EventMemberRepository {
         entityManager.persist(memberEvent);
     }
 
-//    public List<Member> getAllMemberList(Event event) {
-//        List<MemberEvent> resultList = entityManager.createQuery("select me from MemberEvent me where me.event = :event", MemberEvent.class)
-//                .setParameter("event", event)
-//                .getResultList();
-//
-//        return resultList.stream()
-//                .map(MemberEvent::getMember)
-//                .collect(Collectors.toList());
-//    }
-
     public List<MemberEvent> getAllMemberList(Event event) {
         return entityManager.createQuery("select me from MemberEvent me where me.event = :event", MemberEvent.class)
                 .setParameter("event", event)
@@ -79,6 +69,12 @@ public class EventMemberRepository {
         return entityManager.createQuery("select me.member from MemberEvent me where me.event = :event and me.purchased = :purchased", Member.class)
                 .setParameter("event", event)
                 .setParameter("purchased", PurchaseStatus.WAITING)
+                .getResultList();
+    }
+
+    public List<MemberEvent> getMemberJoinedEvent(Member member) {
+        return entityManager.createQuery("select me from MemberEvent me where me.member = :member", MemberEvent.class)
+                .setParameter("member", member)
                 .getResultList();
     }
 

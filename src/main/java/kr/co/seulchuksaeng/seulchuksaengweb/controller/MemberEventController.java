@@ -3,6 +3,7 @@ package kr.co.seulchuksaeng.seulchuksaengweb.controller;
 import kr.co.seulchuksaeng.seulchuksaengweb.annotation.AdminAuthorize;
 import kr.co.seulchuksaeng.seulchuksaengweb.annotation.LogExecutionTime;
 import kr.co.seulchuksaeng.seulchuksaengweb.annotation.UserAuthorize;
+import kr.co.seulchuksaeng.seulchuksaengweb.domain.MemberEvent;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.MemberEventForm;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.MemberEventResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventMemberListInnerResult;
@@ -10,6 +11,7 @@ import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.AlreadyMemberInEvent
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.EventAlreadyEndedException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.NoEventException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.*;
+import kr.co.seulchuksaeng.seulchuksaengweb.repository.EventMemberRepository;
 import kr.co.seulchuksaeng.seulchuksaengweb.service.MemberEventService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -153,6 +155,36 @@ public class MemberEventController {
         } catch (UserNotFoundException | NoEventException | NoEventMemberException | AlreadyPurchasedException e) {
             log.info("경기 활동비 납부 확인에 실패하였습니다 - 요청자 : {}, 경기 고유 번호 : {}, 실패 사유 : {}", user.getUsername(), form.eventId(), e.getMessage());
             return new MemberEventResult.PurchaseCheck("fail", e.getMessage());
+        }
+    }
+
+    @AdminAuthorize
+    @LogExecutionTime
+    @PostMapping("/memberEventDetail")
+    public MemberEventResult.MemberEventDetail memberEventDetail(@AuthenticationPrincipal User user, @RequestBody MemberEventForm.MemberEventDetail form) {
+        try {
+            MemberEvent memberEvent = memberEventService.getMemberEvent(form.eventId(), form.memberId());
+            return new MemberEventResult.MemberEventDetail("success", "부원 참여 경기 상세 조회에 성공하였습니다", memberEvent.getAttend(), memberEvent.getPurchased());
+        } catch (UserNotFoundException | NoEventException | NoEventMemberException e) {
+            return new MemberEventResult.MemberEventDetail("fail", e.getMessage(), null, null);
+        } catch (Exception e) {
+
+            log.error(e.getMessage());
+            return new MemberEventResult.MemberEventDetail("fail", "알 수 없는 문제로 실패", null, null);
+        }
+    }
+
+    @AdminAuthorize
+    @LogExecutionTime
+    @PostMapping("/memberForceAttend")
+    public MemberEventResult.ForceAttend memberForceAttend(@AuthenticationPrincipal User user, @RequestBody MemberEventForm.ForceAttend form) {
+        try {
+            memberEventService.forceAttend(form.eventId(), form.memberId());
+            return new MemberEventResult.ForceAttend("success", "부원 경기 직권 출석 처리에 성공하였습니다.");
+        } catch (UserNotFoundException | NoEventException | NoEventMemberException e) {
+            return new MemberEventResult.ForceAttend("fail", e.getMessage());
+        } catch (Exception e) {
+            return new MemberEventResult.ForceAttend("fail", "알 수 없는 오류 발생");
         }
     }
 
