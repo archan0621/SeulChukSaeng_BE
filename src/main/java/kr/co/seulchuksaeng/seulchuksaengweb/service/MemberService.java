@@ -1,12 +1,16 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.service;
 
-import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
-import kr.co.seulchuksaeng.seulchuksaengweb.domain.UserRole;
+import kr.co.seulchuksaeng.seulchuksaengweb.domain.*;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.MemberForm;
+import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventMemberListInnerResult;
+import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.MemberDetailInnerResult;
+import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.MemberListInnerResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.ExistMemberException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.UnverifiedJoinException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.UserNotFoundException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.WrongPasswordException;
+import kr.co.seulchuksaeng.seulchuksaengweb.repository.EventMemberRepository;
+import kr.co.seulchuksaeng.seulchuksaengweb.repository.EventRepository;
 import kr.co.seulchuksaeng.seulchuksaengweb.repository.MemberRepository;
 import kr.co.seulchuksaeng.seulchuksaengweb.security.Crypto;
 import kr.co.seulchuksaeng.seulchuksaengweb.security.TokenProvider;
@@ -15,13 +19,18 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service @Slf4j
 @RequiredArgsConstructor
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final EventRepository eventRepository;
+    private final EventMemberRepository eventMemberRepository;
     private final Crypto crypto;
     private final TokenProvider tokenProvider;
 
@@ -61,6 +70,35 @@ public class MemberService {
         }
     }
 
+    public List<MemberListInnerResult> getMemberList() {
+        return memberRepository.findAllMember()
+                .stream()
+                .map(result -> new MemberListInnerResult(
+                        result.getMemberId(),
+                        result.getName(),
+                        result.getGender(),
+                        result.getPhone(),
+                        result.getWarnPoint()
+                ))
+                .collect(Collectors.toList());
+    }
+
+    public MemberDetailInnerResult.MemberInfo getMemberDetail(Member member) {
+        return new MemberDetailInnerResult.MemberInfo(member.getMemberId(), member.getName(), member.getGender(), member.getPhone(), member.getWarnPoint());
+    }
+
+    public MemberDetailInnerResult.rate getMemberRate(Member member) {
+        List<Event> eventList = eventRepository.findEventList(member.getGender());
+        List<MemberEvent> memberJoinedEvent = eventMemberRepository.getMemberJoinedEvent(member);
+        Map<Attendance, Long> attendCounting = memberJoinedEvent.stream().collect(Collectors.groupingBy(MemberEvent::getAttend, Collectors.counting()));
+
+        return new MemberDetailInnerResult.rate(eventList.size(), memberJoinedEvent.size(), attendCounting.get(Attendance.ATTEND), attendCounting.get(Attendance.LATE), attendCounting.get(Attendance.ABSENT));
+    }
+
+    @Transactional
+    public List<MemberDetailInnerResult.joinedGame> getMemberJoinedGame(Member member) {
+         return eventMemberRepository.getMemberJoinedEvent(member).stream().map(result -> new MemberDetailInnerResult.joinedGame(result.getEvent().getEventId(), result.getEvent().getTitle())).collect(Collectors.toList());
+    }
 
     private void validateDuplicateMember(MemberForm.Join joinForm) {
         //EXCEPTION
@@ -71,13 +109,12 @@ public class MemberService {
     }
 
     public void verifiedMemberJoin(MemberForm.Join joinForm, String verifyCode) {
-        //회원 인증코드 검증
-        String verifyCodeUser = joinForm.verifyCode();
+                //회원 인증코드 검증
+                String verifyCodeUser = joinForm.verifyCode();
         if (!Objects.equals(verifyCode, verifyCodeUser)) {
             log.info("현재 인증코드 : {}, 입력받은 인증코드 : {} - 회원가입 거부", verifyCode, verifyCodeUser);
             throw new UnverifiedJoinException();
         }
         log.info("현재 인증코드 : {}, 입력받은 인증코드 : {} - 회원가입 승인", verifyCode, verifyCodeUser);
-
     }
 }
