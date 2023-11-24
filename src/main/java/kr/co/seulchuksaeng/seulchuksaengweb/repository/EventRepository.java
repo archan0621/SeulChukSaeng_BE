@@ -28,7 +28,6 @@ public class EventRepository {
     public List<Event> findEventList(Gender gender) {
         return entityManager.createQuery("select e from Event e where e.gender = :gender order by e.startTime desc", Event.class)
                 .setParameter("gender", gender)
-                .setMaxResults(4)
                 .getResultList();
     }
 
