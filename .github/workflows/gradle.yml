@@ -25,6 +25,7 @@ jobs:
         java-version: '19'
         distribution: 'corretto'
     - uses: actions/checkout@v3
+    - run: mkdir ./src/main/resources
     - run: touch ./src/main/resources/application.yml
     - run: echo "${{ secrets.BUILDINFORMATION }}" > ./src/main/resources/application.yml
     - run: cat ./src/main/resources/application.yml
