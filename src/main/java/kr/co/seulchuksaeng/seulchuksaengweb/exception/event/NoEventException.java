@@ -1,6 +1,6 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.exception.event;
 
-public class NoEventException extends RuntimeException {
+public class NoEventException extends EventException {
 
     public NoEventException() {
         super("경기가 존재하지 않습니다.");

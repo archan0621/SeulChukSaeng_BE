@@ -1,6 +1,6 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.exception.member;
 
-public class WrongPasswordException extends RuntimeException {
+public class WrongPasswordException extends MemberException {
     public WrongPasswordException() {
         super("비밀번호가 일치하지 않습니다.");
     }

@@ -1,6 +1,6 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.exception.member;
 
-public class AlreadyPurchasedException extends RuntimeException {
+public class AlreadyPurchasedException extends MemberException {
     public AlreadyPurchasedException() {
         super("이미 활동비 납부 처리가 완료된 경기입니다.");
     }
