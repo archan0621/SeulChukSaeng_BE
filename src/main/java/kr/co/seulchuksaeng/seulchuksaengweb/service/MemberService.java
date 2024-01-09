@@ -2,14 +2,13 @@ package kr.co.seulchuksaeng.seulchuksaengweb.service;
 
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.*;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.form.MemberForm;
-import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventMemberListInnerResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.MemberDetailInnerResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.MemberListInnerResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.ExistMemberException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.UnverifiedJoinException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.UserNotFoundException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.WrongPasswordException;
-import kr.co.seulchuksaeng.seulchuksaengweb.repository.EventMemberRepository;
+import kr.co.seulchuksaeng.seulchuksaengweb.repository.MemberEventRepository;
 import kr.co.seulchuksaeng.seulchuksaengweb.repository.EventRepository;
 import kr.co.seulchuksaeng.seulchuksaengweb.repository.MemberRepository;
 import kr.co.seulchuksaeng.seulchuksaengweb.security.Crypto;
@@ -30,7 +29,7 @@ public class MemberService {
 
     private final MemberRepository memberRepository;
     private final EventRepository eventRepository;
-    private final EventMemberRepository eventMemberRepository;
+    private final MemberEventRepository memberEventRepository;
     private final Crypto crypto;
     private final TokenProvider tokenProvider;
 
@@ -89,7 +88,7 @@ public class MemberService {
 
     public MemberDetailInnerResult.rate getMemberRate(Member member) {
         List<Event> eventList = eventRepository.findEventList(member.getGender());
-        List<MemberEvent> memberJoinedEvent = eventMemberRepository.getMemberJoinedEvent(member);
+        List<MemberEvent> memberJoinedEvent = memberEventRepository.getMemberJoinedEvent(member);
         Map<Attendance, Long> attendCounting = memberJoinedEvent.stream().collect(Collectors.groupingBy(MemberEvent::getAttend, Collectors.counting()));
 
         return new MemberDetailInnerResult.rate(eventList.size(), memberJoinedEvent.size(), attendCounting.get(Attendance.ATTEND), attendCounting.get(Attendance.LATE), attendCounting.get(Attendance.ABSENT));
@@ -97,7 +96,7 @@ public class MemberService {
 
     @Transactional
     public List<MemberDetailInnerResult.joinedGame> getMemberJoinedGame(Member member) {
-         return eventMemberRepository.getMemberJoinedEvent(member).stream().map(result -> new MemberDetailInnerResult.joinedGame(result.getEvent().getEventId(), result.getEvent().getTitle())).collect(Collectors.toList());
+         return memberEventRepository.getMemberJoinedEvent(member).stream().map(result -> new MemberDetailInnerResult.joinedGame(result.getEvent().getEventId(), result.getEvent().getTitle())).collect(Collectors.toList());
     }
 
     private void validateDuplicateMember(MemberForm.Join joinForm) {

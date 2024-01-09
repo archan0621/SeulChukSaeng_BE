@@ -6,13 +6,11 @@ import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.NoEventMemberExcept
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Repository
 @RequiredArgsConstructor
-public class EventMemberRepository {
+public class MemberEventRepository {
 
     private final EntityManager entityManager;
 
