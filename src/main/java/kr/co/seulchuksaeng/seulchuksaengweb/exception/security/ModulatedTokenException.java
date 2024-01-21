@@ -6,12 +6,6 @@ public class ModulatedTokenException extends SecurityException {
         super("유효하지 않은 토큰으로 JWT 요청시도");
     }
 
-    public ModulatedTokenException(String srcAddr, String methodName) {
-        super("유효하지 않은 토큰으로 JWT 요청시도");
-        this.srcAddr = srcAddr;
-        this.methodName = methodName;
-    }
-
     public ModulatedTokenException(String message) {
         super(message);
     }
