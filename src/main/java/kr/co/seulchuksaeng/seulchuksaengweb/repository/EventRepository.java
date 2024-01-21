@@ -1,12 +1,15 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.repository;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.Query;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Event;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Gender;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.NoEventException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Repository
@@ -37,6 +40,16 @@ public class EventRepository {
             throw new NoEventException();
         }
         return event;
+    }
+
+    public List<Event> findByEndTime(LocalDate currentDate) {
+        LocalDateTime startOfDay = currentDate.atStartOfDay();
+        LocalDateTime endOfDay = currentDate.plusDays(1).atStartOfDay().minusNanos(1);
+
+        return entityManager.createQuery("SELECT e FROM Event e WHERE e.endTime >= :startOfDay AND e.endTime <= :endOfDay", Event.class)
+                .setParameter("startOfDay", startOfDay)
+                .setParameter("endOfDay", endOfDay)
+                .getResultList();
     }
 
 }
