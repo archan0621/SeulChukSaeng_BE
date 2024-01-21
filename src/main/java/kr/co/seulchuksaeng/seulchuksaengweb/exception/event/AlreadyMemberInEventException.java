@@ -1,6 +1,6 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.exception.event;
 
-public class AlreadyMemberInEventException extends RuntimeException {
+public class AlreadyMemberInEventException extends EventException {
 
     public AlreadyMemberInEventException() {
         super("이미 경기에 포함된 회원입니다.");

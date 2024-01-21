@@ -76,6 +76,10 @@ public class MemberEvent {
         return Attendance.ATTEND;
     }
 
+    public void forceAttend() {
+        this.attend = Attendance.ATTEND;
+    }
+
     public void purchaseRequest() {
         if (this.purchased.equals(PurchaseStatus.PURCHASED)) { // 납부 상태가 납부 완료인 경우 예외 발생
             throw new AlreadyPurchasedException();

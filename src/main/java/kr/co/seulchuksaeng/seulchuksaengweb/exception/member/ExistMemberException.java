@@ -1,6 +1,6 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.exception.member;
 
-public class ExistMemberException extends RuntimeException {
+public class ExistMemberException extends MemberException {
     public ExistMemberException() {
         super("이미 존재하는 회원입니다.");
     }

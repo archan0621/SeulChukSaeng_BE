@@ -14,7 +14,7 @@ import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventReadInne
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventShowcaseInnerResult;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.NoEventException;
 import kr.co.seulchuksaeng.seulchuksaengweb.httpProvider.NaverMapApiProvider;
-import kr.co.seulchuksaeng.seulchuksaengweb.repository.EventMemberRepository;
+import kr.co.seulchuksaeng.seulchuksaengweb.repository.MemberEventRepository;
 import kr.co.seulchuksaeng.seulchuksaengweb.repository.EventRepository;
 import kr.co.seulchuksaeng.seulchuksaengweb.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -33,7 +33,7 @@ public class EventService {
     private final MemberRepository memberRepository;
     private final EventRepository eventRepository;
     private final NaverMapApiProvider naverMapApiProvider;
-    private final EventMemberRepository eventMemberRepository;
+    private final MemberEventRepository memberEventRepository;
 
     @Transactional
     public void create(EventForm.Create ef, String id) {
@@ -76,7 +76,7 @@ public class EventService {
         try {
             Event event = eventRepository.findEventById(eventId);
             Member member = memberRepository.findMemberById(userId);
-            MemberEvent detail = eventMemberRepository.findMemberEventByMemberAndEvent(member, event);// 경기에 참여한 인원인지 확인
+            MemberEvent detail = memberEventRepository.findMemberEventByMemberAndEvent(member, event);// 경기에 참여한 인원인지 확인
             return EventReadInnerResult.builder()
                     .eventId(event.getEventId())
                     .title(event.getTitle())
@@ -111,7 +111,7 @@ public class EventService {
     @Transactional
     public void update(EventForm.Update form) {
         Event event = eventRepository.findEventById(Long.valueOf(form.eventId()));
-        if (!eventMemberRepository.getAllMemberList(event).isEmpty()) { // 경기에 참여한 인원이 있을 경우 경기 성별 수정 불가
+        if (!memberEventRepository.getAllMemberList(event).isEmpty()) { // 경기에 참여한 인원이 있을 경우 경기 성별 수정 불가
             if (!event.getGender().equals(form.gender())) {
                 throw new ParticipantGenderChangeException();
             }

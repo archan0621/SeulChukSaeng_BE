@@ -1,6 +1,6 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.exception.security;
 
-public class ExpiredTokenException extends RuntimeException {
+public class ExpiredTokenException extends SecurityException {
     public ExpiredTokenException() {
         super("만료된 토큰으로 JWT 요청시도");
     }

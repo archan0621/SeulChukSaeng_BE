@@ -1,6 +1,6 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.exception.member;
 
-public class NoEventMemberException extends RuntimeException {
+public class NoEventMemberException extends MemberException {
     public NoEventMemberException() {
         super("경기에 참여한 회원이 아닙니다.");
     }
