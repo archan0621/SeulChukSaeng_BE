@@ -44,7 +44,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
         } catch (ExpiredTokenException  | ModulatedTokenException e) {
-            logger.info(e.getMessage());
+            logger.info(e.getMessage() + " IP : " +request.getRemoteAddr() +  " " + request.getHeader("Authorization: Bearer "));
             sendError(response, HttpStatus.UNAUTHORIZED, new NetworkError("fail",e.getMessage()));
         }
     }
