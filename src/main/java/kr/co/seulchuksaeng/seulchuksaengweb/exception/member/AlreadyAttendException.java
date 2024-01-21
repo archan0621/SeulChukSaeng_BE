@@ -1,6 +1,6 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.exception.member;
 
-public class AlreadyAttendException extends RuntimeException {
+public class AlreadyAttendException extends MemberException {
     public AlreadyAttendException() {
         super("이미 출석처리가 완료된 경기입니다.");
     }

@@ -72,4 +72,18 @@ public class Event {
         this.longitude = x;
     }
 
+    @Override
+    public String toString() {
+        return getClass().getSimpleName() + "(" +
+                "eventId = " + eventId + ", " +
+                "title = " + title + ", " +
+                "location = " + location + ", " +
+                "description = " + description + ", " +
+                "latitude = " + latitude + ", " +
+                "longitude = " + longitude + ", " +
+                "gender = " + gender + ", " +
+                "startTime = " + startTime + ", " +
+                "endTime = " + endTime + ", " +
+                "money = " + money + ")";
+    }
 }

@@ -37,14 +37,14 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             String token = parseBearerToken(request);
-            User user = parseUserSpecification(token);
+            User user = parseUserSpecification(token, request);
             AbstractAuthenticationToken authenticated = UsernamePasswordAuthenticationToken.authenticated(user, token, user.getAuthorities());
             authenticated.setDetails(new WebAuthenticationDetails(request));
             SecurityContextHolder.getContext().setAuthentication(authenticated);
 
             filterChain.doFilter(request, response);
         } catch (ExpiredTokenException  | ModulatedTokenException e) {
-            logger.info(e.getMessage());
+            logger.info(e.getMessage() + " IP : " +request.getRemoteAddr() +  " " + request.getHeader("Authorization: Bearer "));
             sendError(response, HttpStatus.UNAUTHORIZED, new NetworkError("fail",e.getMessage()));
         }
     }
@@ -63,11 +63,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     .map(token -> token.substring(7))
                     .orElse(null);
         } catch (Exception e) {
-            throw new ModulatedTokenException();
+            throw new ModulatedTokenException(request.getRemoteAddr(), request.getMethod());
         }
     }
 
-    public User parseUserSpecification(String token) {
+    public User parseUserSpecification(String token, HttpServletRequest request) {
         try {
             String[] split = Optional.ofNullable(token)
                     .filter(subject -> subject.length() >= 10)

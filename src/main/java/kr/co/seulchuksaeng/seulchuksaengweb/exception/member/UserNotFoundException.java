@@ -1,6 +1,6 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.exception.member;
 
-public class UserNotFoundException extends RuntimeException{
+public class UserNotFoundException extends MemberException {
 
     public UserNotFoundException() {
         super("존재하지 않는 회원입니다.");

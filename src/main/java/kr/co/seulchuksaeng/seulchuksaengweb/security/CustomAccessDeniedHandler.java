@@ -30,15 +30,7 @@ public class CustomAccessDeniedHandler implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response, AccessDeniedException accessDeniedException) throws IOException, ServletException {
         // 권한이 없는 Jwt로 요청이 오면 경고 로그를 출력하고 에러메세지를 돌려준다
         String reqToken = jwtAuthenticationFilter.parseBearerToken(request);
-        User user = null;
-        try {
-            user = jwtAuthenticationFilter.parseUserSpecification(reqToken);
-        } catch (ExpiredTokenException e) {
-            sendError(response, HttpStatus.FORBIDDEN, new NetworkError("fail", "만료된 토큰으로 JWT 요청시도"));
-        } catch (ModulatedTokenException e) {
-            sendError(response, HttpStatus.FORBIDDEN, new NetworkError("fail", "유효하지 않은 토큰으로 JWT 요청시도"));
-        }
-
+        User user = jwtAuthenticationFilter.parseUserSpecification(reqToken, request);
         log.warn("권한 없는 접근 시도 - 아이디: {}, 아이피: {}, URL: {}", user != null ? user.getUsername() : "Unknown", request.getRemoteAddr(), request.getRequestURI());
         sendError(response, HttpStatus.FORBIDDEN, new NetworkError("fail", "접근 권한이 없습니다"));
         discordLogger.send(String.format("🚨경고🚨 권한 없는 접근 시도 발생 - 아이디: %s, 아이피: %s, URL: %s", user != null ? user.getUsername() : "Unknown", request.getRemoteAddr(), request.getRequestURI()), Scope.here);

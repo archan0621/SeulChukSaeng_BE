@@ -1,5 +1,7 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.dto.result;
 
+import kr.co.seulchuksaeng.seulchuksaengweb.domain.Attendance;
+import kr.co.seulchuksaeng.seulchuksaengweb.domain.PurchaseStatus;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.EventMemberListInnerResult;
 import lombok.Getter;
 
@@ -20,4 +22,8 @@ public record MemberEventResult() {
     public record PurchaseList(String result, String message, List<EventMemberListInnerResult> memberList, int memberCount) {}
 
     public record PurchaseCheck(String result, String message) {}
+
+    public record MemberEventDetail(String result, String message, Attendance attend, PurchaseStatus purchaseStatus) {}
+
+    public record ForceAttend(String result, String message) {}
 }
