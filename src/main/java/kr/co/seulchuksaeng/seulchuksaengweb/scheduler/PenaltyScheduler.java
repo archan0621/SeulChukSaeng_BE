@@ -40,12 +40,13 @@ public class PenaltyScheduler {
             log.info("오늘은 경기가 없는 주입니다~! 경고 스케줄러를 따로 생성하지 않겠습니다!");
         } else {
             for (Event i : byEndTime) {
-                createPenaltyScheduler(i.getEndTime());
+                createPenaltyScheduler(i.getEndTime(), i);
             }
         }
     }
 
-    public void createPenaltyScheduler(LocalDateTime executionTime) {
+
+    public void createPenaltyScheduler(LocalDateTime executionTime, Event event) {
         TaskScheduler taskScheduler = new ConcurrentTaskScheduler();
 
         String cronExpression = String.format("0 %d %d %d %d *",
@@ -55,8 +56,8 @@ public class PenaltyScheduler {
                 executionTime.getMonthValue());
 
         CronTrigger trigger = new CronTrigger(cronExpression);
+        taskScheduler.schedule(() -> penaltyGrantTask.grantTask(event), trigger);
 
-        taskScheduler.schedule(penaltyGrantTask.grantTask, trigger);
     }
 
 }
