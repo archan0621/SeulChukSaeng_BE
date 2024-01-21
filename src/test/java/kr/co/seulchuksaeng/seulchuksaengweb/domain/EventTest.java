@@ -13,7 +13,7 @@ class EventTest {
     public void createEvent() throws Exception {
         //given
         Member member = new Member("testId", "testPw", "testName", "010-0000-0000", Gender.MALE, UserRole.USER, "testSalt", 0);
-        Event event = new Event("testTitle", "testLocation", "testDesc", Gender.MALE, null, null, "testMoney", member);
+        Event event = new Event("testTitle", "testLocation", "testDesc", null, null, Gender.MALE, null, null, "testMoney", member);
         //when & then
         assertEquals(event.getTitle(), "testTitle");
         assertEquals(event.getLocation(), "testLocation");
@@ -27,7 +27,7 @@ class EventTest {
     void update() {
         //given
         Member member = new Member("testId", "testPw", "testName", "010-0000-0000", Gender.MALE, UserRole.USER, "testSalt", 0);
-        Event event = new Event("testTitle", "testLocation", "testDesc", Gender.MALE, null, null, "testMoney", member);
+        Event event = new Event("testTitle", "testLocation", "testDesc", null, null, Gender.MALE, null, null, "testMoney", member);
         //when
         event.update("updateTitle", "updateLocation", "updateDesc", Gender.FEMALE, null, null, "updateMoney");
         //then
