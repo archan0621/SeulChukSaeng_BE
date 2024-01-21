@@ -4,7 +4,6 @@ public class ModulatedTokenException extends RuntimeException {
     public ModulatedTokenException() {
         super("유효하지 않은 토큰으로 JWT 요청시도");
     }
-
     public ModulatedTokenException(String message) {
         super(message);
     }
