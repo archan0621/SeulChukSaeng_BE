@@ -63,7 +63,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     .map(token -> token.substring(7))
                     .orElse(null);
         } catch (Exception e) {
-            throw new ModulatedTokenException(request.getRemoteAddr(), request.getMethod());
+            throw new ModulatedTokenException();
         }
     }
 
