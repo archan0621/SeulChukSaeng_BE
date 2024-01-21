@@ -48,7 +48,6 @@ jobs:
 
       # create application-vultr.yml
       - name: Make application-vultr.yml
-        if: contains(github.ref, 'master')
         run: |
           cd ./src/main/resources
           rm ./application.yml
@@ -65,7 +64,7 @@ jobs:
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
           docker build -t ${{ secrets.DOCKER_REPO }}/seulchuksaeng .
-          docker buildx build --platform linux/amd64 -t ${{ secrets.DOCKER_REPO }}/seulchuksaeng --build-arg PROPERTIES=${{secrets.VULTR_DATABASE_PROPERTIES}} -f Dockerfile .
+          docker buildx build --platform linux/amd64 -t ${{ secrets.DOCKER_REPO }}/seulchuksaeng --build-arg PROPERTIES=./src/main/resources/application.yml -f Dockerfile .
           docker push ${{ secrets.DOCKER_REPO }}/seulchuksaeng
 
       ## docker compose up
