@@ -5,9 +5,6 @@ import com.github.archan0621.Scope;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.EventException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.MemberException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.security.ExpiredTokenException;
-import kr.co.seulchuksaeng.seulchuksaengweb.exception.security.ModulatedTokenException;
-import kr.co.seulchuksaeng.seulchuksaengweb.exception.security.SecurityException;
-import org.springframework.core.annotation.Order;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
