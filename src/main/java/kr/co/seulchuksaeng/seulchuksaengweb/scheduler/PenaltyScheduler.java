@@ -30,8 +30,7 @@ public class PenaltyScheduler {
     private final EventRepository eventRepository;
     private final PenaltyGrantTask penaltyGrantTask;
 
-//    @Scheduled(cron = "0 0 0 ? * SUN")
-    @Scheduled(cron = "0/10 * * * * * ")
+    @Scheduled(cron = "0 0 0 ? * SUN")
     public void checkTodaysEvent() {
         LocalDate today = LocalDate.now();
         List<Event> byEndTime = eventRepository.findByEndTime(today);
