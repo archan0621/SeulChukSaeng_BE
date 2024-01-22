@@ -18,7 +18,7 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
-    private final String[] allowedUrls = {"/member/**"}; // 허용 URL 목록
+    private final String[] allowedUrls = {"/member/**", "/actuator/**"}; // 허용 URL 목록
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
