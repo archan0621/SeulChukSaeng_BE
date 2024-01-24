@@ -35,8 +35,9 @@ class MemberTest {
         member.giveWarnPoint();
         //then
         assertEquals(member.getWarnPoint(), 1);
+        //one more time
+        member.giveWarnPoint();
+        assertEquals(member.getWarnPoint(), 2);
     }
-
-
 
 }
