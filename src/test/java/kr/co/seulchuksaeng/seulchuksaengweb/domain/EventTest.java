@@ -37,4 +37,17 @@ class EventTest {
         assertEquals(event.getGender(), Gender.FEMALE);
         assertEquals(event.getMoney(), "updateMoney");
     }
+
+    @Test
+    @DisplayName("위도 경도 수정 테스트")
+    void updateLocation() {
+        Member member = new Member("testId", "testPw", "testName", "010-0000-0000", Gender.MALE, UserRole.USER, "testSalt", 0);
+        Event event = new Event("testTitle", "testLocation", "testDesc", 31D, 30D, Gender.MALE, null, null, "testMoney", member);
+
+        event.updateLocation(123D, 456D);
+
+        assertEquals(event.getLatitude(), 123D);
+        assertEquals(event.getLongitude(), 456D);
+
+    }
 }
