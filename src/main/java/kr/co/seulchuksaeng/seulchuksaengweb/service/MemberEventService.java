@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -84,7 +85,7 @@ public class MemberEventService {
             throw new FarFromLocationException();
         }
 
-        Attendance attend = memberEvent.attend();
+        Attendance attend = memberEvent.attend(LocalDateTime.now());
 
 //        if (attend.equals(Attendance.LATE)) {
 //            log.info("{} 님이 지각하셨습니다, 경고 +1 처리됩니다.", member.getId());
