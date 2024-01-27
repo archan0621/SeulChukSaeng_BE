@@ -1,10 +1,15 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult;
 
-import lombok.Getter;
+import kr.co.seulchuksaeng.seulchuksaengweb.domain.Gender;
+
+import java.time.LocalDateTime;
 
 public record EventShowcaseInnerResult(
         Long eventId,
-        String eventTitle
-
+        String eventTitle,
+        Gender gender,
+        String location,
+        String money,
+        LocalDateTime startTime
 ) {}
 
