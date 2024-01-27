@@ -10,6 +10,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.parameters.P;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
+import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 @Configuration
 @EnableMethodSecurity
@@ -18,14 +19,13 @@ public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
     private final CustomAccessDeniedHandler customAccessDeniedHandler;
-    private final String[] allowedUrls = {"/member/**", "/actuator/**"}; // 허용 URL 목록
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)	// csrf 비활성화
                 .authorizeHttpRequests(requests ->
-                        requests.requestMatchers(allowedUrls).permitAll()
+                        requests.requestMatchers(new AntPathRequestMatcher("/member/**"), new AntPathRequestMatcher("/actuator/**")).permitAll()
                                 .anyRequest().authenticated()	// 그 외의 모든 요청은 인증 필요
                 )
                 .sessionManagement(sessionManagement ->
