@@ -41,14 +41,12 @@ public class MemberEvent {
         this.purchased = purchased;
     }
 
-    public Attendance attend() {
+    public Attendance attend(LocalDateTime currentTime) {
 
         if (this.attend == Attendance.ATTEND || this.attend == Attendance.LATE) { // 이미 출결한 상태인 경우 예외 발생
             throw new AlreadyAttendException();
         }
 
-        // 현재 시간과 경기 시작 시간 비교 후 참여 상태를 결정
-        LocalDateTime currentTime = LocalDateTime.now();
         LocalDateTime eventStartTime = event.getStartTime();
         LocalDateTime eventEndTime = event.getEndTime(); // 경기 종료 시간 추가
 
@@ -77,7 +75,12 @@ public class MemberEvent {
     }
 
     public void forceAttend() {
+
+        if(this.attend == Attendance.ATTEND) {
+            throw new AlreadyAttendException();
+        }
         this.attend = Attendance.ATTEND;
+
     }
 
     public void purchaseRequest() {

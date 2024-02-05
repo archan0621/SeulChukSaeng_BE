@@ -51,7 +51,7 @@ public class EventService {
     public EventResult.Showcase list() { // 관리자 전용 서비스
         try {
             List<EventShowcaseInnerResult> eventShowcaseInnerResultList = eventRepository.findEventList().stream()
-                    .map(event -> new EventShowcaseInnerResult(event.getEventId(), event.getTitle()))
+                    .map(event -> new EventShowcaseInnerResult(event.getEventId(), event.getTitle(), event.getGender(), event.getLocation(), event.getMoney(), event.getStartTime()))
                     .collect(Collectors.toList());
 
             return new EventResult.Showcase("success", "경기 목록 조회에 성공하였습니다", eventShowcaseInnerResultList, eventShowcaseInnerResultList.size());
@@ -63,7 +63,7 @@ public class EventService {
     public EventResult.Showcase list(Gender gender) { // 일반 유저 서비스
         try {
             List<EventShowcaseInnerResult> eventShowcaseInnerResultList = eventRepository.findEventList(gender).stream()
-                    .map(event -> new EventShowcaseInnerResult(event.getEventId(), event.getTitle()))
+                    .map(event -> new EventShowcaseInnerResult(event.getEventId(), event.getTitle(), event.getGender(), event.getLocation(), event.getMoney(), event.getStartTime()))
                     .collect(Collectors.toList());
 
             return new EventResult.Showcase("success", "경기 목록 조회에 성공하였습니다", eventShowcaseInnerResultList, eventShowcaseInnerResultList.size());
