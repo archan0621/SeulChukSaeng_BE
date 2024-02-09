@@ -76,7 +76,7 @@ public class MemberController {
         return new MemberResult.MemberList("success", "유저 목록 조회 성공", allMember);
     }
 
-    @AdminAuthorize
+    @UserAuthorize
     @LogExecutionTime
     @PostMapping("/memberDetail")
     public MemberResult.Detail memberDetail(@AuthenticationPrincipal User user, @RequestBody MemberForm.Detail detailForm) {
