@@ -63,7 +63,7 @@ public class MemberController {
         log.info("Jwt 로그인 토큰 정상발급 확인 요청이 발생하였습니다 - 아이디 : {}", user.getUsername());
         Member member = memberRepository.findMemberById(user.getUsername());
         log.info("Jwt 로그인 토큰 정상발급 확인 완료 - 아이디 : {}", user.getUsername());
-        return new MemberResult.GetUserName("success", member.getName(), member.getRole());
+        return new MemberResult.GetUserName("success", member.getName(), member.getRole(), member.getMemberId());
     }
 
     @AdminAuthorize
