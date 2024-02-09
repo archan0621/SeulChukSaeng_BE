@@ -15,7 +15,7 @@ public record MemberResult() {
 
     public record Remove(String result, String message) {}
 
-    public record GetUserName(String result, String message, UserRole userRole) {}
+    public record GetUserName(String result, String message, UserRole userRole, Long memberId) {}
 
     public record MemberList(String result, String message, List<MemberListInnerResult> memberList) {}
 
