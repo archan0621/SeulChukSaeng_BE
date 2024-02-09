@@ -12,4 +12,4 @@ COPY ${JAR_FILE} app.jar
 COPY ${PROPERTIES} application.yml
 
 # Set the entry point for the container
-ENTRYPOINT ["nohup", "java", "-jar", "/app.jar"]
+ENTRYPOINT ["nohup", "java", "-jar", "/app.jar", ">" , "/server.log"]
