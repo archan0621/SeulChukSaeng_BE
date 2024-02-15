@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.CompletableFuture;
@@ -23,15 +24,23 @@ public class SlowResponseAspect {
 
     private final DiscordLogger discordLogger = DiscordLogger.instance();
 
+    @Value("${logger.alert}")
+    private Boolean alertUse;
+
     @Around("@annotation(kr.co.seulchuksaeng.seulchuksaengweb.annotation.LogExecutionTime)")
     public Object slowResponseCheck(ProceedingJoinPoint joinPoint) throws Throwable {
+
+        if (!alertUse) {
+            return joinPoint.proceed();
+        }
+
         long start = System.currentTimeMillis();
         Object result = joinPoint.proceed();
         long end = System.currentTimeMillis();
 
         long responseTime = end - start;
 
-        if (responseTime > 500) {
+        if (responseTime > 1) {
             log.warn("🚨경고🚨 응답 지연 발생 - : " + joinPoint.getSignature().toShortString() + " 응답 시간 : " + responseTime + "ms");
             CompletableFuture.runAsync(() -> { // 비동기로 Discord 알림을 보냄
                 discordLogger.send("🚨경고🚨 응답 지연 발생 - " + joinPoint.getSignature().toShortString() + " 응답 시간 : " + responseTime + "ms", Scope.here);
