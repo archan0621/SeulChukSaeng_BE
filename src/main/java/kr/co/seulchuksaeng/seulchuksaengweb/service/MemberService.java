@@ -50,8 +50,12 @@ public class MemberService {
     }
 
     public String login(MemberForm.Login loginForm) {
-        try {
+
             //회원 존재 여부 확인
+            if(!memberRepository.existsById(loginForm.loginId())) {
+                throw new UserNotFoundException();
+            }
+
             Member member = memberRepository.findMemberById(loginForm.loginId());
 
             //회원이 있다면 비밀번호 암호화
@@ -64,9 +68,6 @@ public class MemberService {
 
             // 회원 존재 및 비밀번호 일치 확인시 JWT 토큰 발급
             return tokenProvider.createToken(String.format("%s:%s", member.getId(), member.getRole()));
-        } catch (IndexOutOfBoundsException e) {
-            throw new UserNotFoundException();
-        }
     }
 
     public List<MemberListInnerResult> getMemberList() {
@@ -100,11 +101,9 @@ public class MemberService {
     }
 
     private void validateDuplicateMember(MemberForm.Join joinForm) {
-        //EXCEPTION
-        try {
-            Member member = memberRepository.findMemberById(joinForm.id());
-            throw new ExistMemberException();
-        } catch (UserNotFoundException ignored) { } //UserNotFoundException이 정상인 상황
+            if(memberRepository.existsById(joinForm.id())){
+                throw new ExistMemberException();
+            }
     }
 
     public void verifiedMemberJoin(MemberForm.Join joinForm, String verifyCode) {

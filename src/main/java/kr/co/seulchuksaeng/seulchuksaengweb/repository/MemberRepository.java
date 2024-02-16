@@ -1,6 +1,8 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.repository;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.NoResultException;
+import jakarta.persistence.NonUniqueResultException;
 import kr.co.seulchuksaeng.seulchuksaengweb.annotation.LogExecutionTime;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
 import kr.co.seulchuksaeng.seulchuksaengweb.dto.result.innerResult.MemberListInnerResult;
@@ -23,14 +25,17 @@ public class MemberRepository {
         entityManager.persist(member);
     }
 
-    public Member findMemberById(String id){
-        try {
+    public Member findMemberById(String id) {
             return entityManager.createQuery("select m from Member m where m.id = :id", Member.class)
                     .setParameter("id", id)
                     .getSingleResult();
-        } catch (Exception e) {
-            throw new UserNotFoundException();
-        }
+    }
+
+    public boolean existsById(String id) {
+        Long count = entityManager.createQuery("select count(m) from Member m where m.id = :id", Long.class)
+                .setParameter("id", id)
+                .getSingleResult();
+        return count > 0;
     }
 
     public Member findMemberByPK(Long id) {
