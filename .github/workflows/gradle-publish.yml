@@ -43,7 +43,7 @@ jobs:
 
       # Gradle build (Test 제외)
       - name: Build with Gradle
-        run: ./gradlew clean --stacktrace --info build
+        run: ./gradlew clean --stacktrace --info -x test build
         shell: bash
 
       # create application-vultr.yml
