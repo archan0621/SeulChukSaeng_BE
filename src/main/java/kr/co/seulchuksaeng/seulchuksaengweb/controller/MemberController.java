@@ -40,10 +40,10 @@ public class MemberController {
     @LogExecutionTime
     @PostMapping("/join") //회원가입 ENDPOINT
     public MemberResult.Join join(@RequestBody MemberForm.Join joinForm) {
-        log.info("회원가입 요청이 발생하였습니다 - 닉네임 : {}", joinForm.name());
+        log.info("회원가입 요청이 발생하였습니다 - 아이디 : {}", joinForm.id());
         memberService.verifiedMemberJoin(joinForm, verifyCode);
         Long joinId = memberService.join(joinForm);
-        log.info("회원가입 성공하였습니다 - 닉네임 : {}", joinForm.name());
+        log.info("회원가입 성공하였습니다 - 아이디 : {}", joinForm.id());
         return new MemberResult.Join("success", "회원가입 성공");
     }
 
