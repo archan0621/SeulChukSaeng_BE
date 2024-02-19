@@ -1,5 +1,9 @@
-package kr.co.seulchuksaeng.seulchuksaengweb.domain;
+package kr.co.seulchuksaeng.seulchuksaengweb.UnitTests.domain;
 
+import kr.co.seulchuksaeng.seulchuksaengweb.domain.Event;
+import kr.co.seulchuksaeng.seulchuksaengweb.domain.Gender;
+import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
+import kr.co.seulchuksaeng.seulchuksaengweb.domain.UserRole;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
