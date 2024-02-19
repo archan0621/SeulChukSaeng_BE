@@ -33,9 +33,10 @@ public class MemberService {
     private final Crypto crypto;
     private final TokenProvider tokenProvider;
 
+
     @Transactional
     public Long join(MemberForm.Join joinForm) {
-        //중복 회원 검증
+
         validateDuplicateMember(joinForm);
 
         //비밀번호 암호화
@@ -51,11 +52,7 @@ public class MemberService {
 
     public String login(MemberForm.Login loginForm) {
 
-            //회원 존재 여부 확인
-            if(!memberRepository.existsById(loginForm.loginId())) {
-                throw new UserNotFoundException();
-            }
-
+            //회원이 없다면 리포지토리에서 예외 발생됨
             Member member = memberRepository.findMemberById(loginForm.loginId());
 
             //회원이 있다면 비밀번호 암호화

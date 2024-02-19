@@ -1,5 +1,6 @@
-package kr.co.seulchuksaeng.seulchuksaengweb.domain;
+package kr.co.seulchuksaeng.seulchuksaengweb.UnitTests.domain;
 
+import kr.co.seulchuksaeng.seulchuksaengweb.domain.*;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.EventAlreadyEndedException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.AlreadyAttendException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.AlreadyPurchasedException;
