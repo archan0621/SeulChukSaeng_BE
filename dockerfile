@@ -8,11 +8,8 @@ ARG PROPERTIES
 ARG PINPOINTLICENSE
 ENV URL $PINPOINTLICENSE
 
-# Install wget
-RUN apt-get update && apt-get install -y wget
-
 # Download and extract the pinpoint agent
-RUN wget https://ncloud-pinpoint.com/agent.tar.gz \
+RUN curl -o agent.tar.gz https://ncloud-pinpoint.com/agent.tar.gz \
     && tar xvf agent.tar.gz -C / \
     && mv /pinpoint-agent-2.2.3-NCP-RC1 /pinpoint-agent \
     && echo "'"$PINPOINTLICENSE"'" > /pinpoint-agent/pinpoint.license \
