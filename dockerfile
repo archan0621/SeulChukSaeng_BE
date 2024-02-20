@@ -9,7 +9,7 @@ ARG PINPOINTLICENSE
 ENV URL $PINPOINTLICENSE
 
 # Download and extract the pinpoint agent
-RUN curl -o agent.tar.gz https://github.com/pinpoint-apm/pinpoint/releases/download/v2.5.3/pinpoint-agent-2.5.3.tar.gz \
+RUN curl -L -o agent.tar.gz https://github.com/pinpoint-apm/pinpoint/releases/download/v2.5.3/pinpoint-agent-2.5.3.tar.gz \
     && tar xvf agent.tar.gz -C / \
     && mv /pinpoint-agent-2.5.3 /pinpoint-agent \
     && echo ""$PINPOINTLICENSE"" > /pinpoint-agent/pinpoint.license
