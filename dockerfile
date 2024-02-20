@@ -23,5 +23,5 @@ COPY ${PROPERTIES} application.yml
 
 # Set the entry point for the container
 
-ENTRYPOINT ["java", "-jar", "-javaagent:${pinpointPath}/pinpoint-bootstrap-2.2.3-NCP-RC1.jar", "-Dpinpoint.applicationName=MainBackEnd", "-Dpinpoint.agentId=bemain", "/app.jar"]
+ENTRYPOINT ["java", "-jar", "-javaagent:/pinpoint-agent-2.2.3-NCP-RC1/pinpoint-bootstrap-2.2.3-NCP-RC1.jar", "-Dpinpoint.applicationName=MainBackEnd", "-Dpinpoint.agentId=bemain", "/app.jar"]
 
