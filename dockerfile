@@ -12,7 +12,7 @@ ENV URL $PINPOINTLICENSE
 RUN curl -o agent.tar.gz https://ncloud-pinpoint.com/agent.tar.gz \
     && tar xvf agent.tar.gz -C / \
     && mv /pinpoint-agent-2.2.3-NCP-RC1 /pinpoint-agent \
-    && echo "'"$PINPOINTLICENSE"'" > /pinpoint-agent/pinpoint.license \
+    && echo ""$PINPOINTLICENSE"" > /pinpoint-agent/pinpoint.license \
     && export pinpointPath=/pinpoint-agent-2.2.3-NCP-RC1
 
 # Copy the JAR file into the image
@@ -23,6 +23,5 @@ COPY ${PROPERTIES} application.yml
 
 # Set the entry point for the container
 
-# ENTRYPOINT ["java", "-jar", "-javaagent:/pinpoint-agent-2.2.3-NCP-RC1/pinpoint-bootstrap-2.2.3-NCP-RC1.jar", "-Dpinpoint.applicationName=MainBackEnd", "-Dpinpoint.agentId=bemain", "/app.jar"]
-ENTRYPOINT ["java", "-jar", "/app.jar"]
+ENTRYPOINT ["java", "-jar", "-javaagent:/pinpoint-agent/pinpoint-bootstrap-2.2.3-NCP-RC1.jar", "-Dpinpoint.applicationName=MainBackEnd", "-Dpinpoint.agentId=bemain", "/app.jar"]
 
