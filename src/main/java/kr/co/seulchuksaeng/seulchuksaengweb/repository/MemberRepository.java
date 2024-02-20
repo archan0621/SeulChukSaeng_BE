@@ -46,7 +46,6 @@ public class MemberRepository {
     public boolean existsById(String id) {
         Member member = entityManager.createQuery("SELECT m FROM Member m WHERE m.id = :id", Member.class)
                 .setParameter("id", id)
-                .setLockMode(LockModeType.PESSIMISTIC_WRITE)
                 .getResultList().stream().findFirst().orElse(null);
         return member != null;
     }
