@@ -14,6 +14,9 @@ RUN curl -L -o agent.tar.gz https://github.com/pinpoint-apm/pinpoint/releases/do
     && mv /pinpoint-agent-2.5.3 /pinpoint-agent \
     && echo ""$PINPOINTLICENSE"" > /pinpoint-agent/pinpoint.license
 
+RUN sed -i 's#profiler.transport.grpc.collector.ip=127.0.0.1#profiler.transport.grpc.collector.ip=collect.pinpoint.ncloud.com#' /pinpoint-agent/pinpoint-root.config
+RUN sed -i 's#profiler.collector.ip=127.0.0.1#profiler.collector.ip=collect.pinpoint.ncloud.com#' /pinpoint-agent/pinpoint-root.config
+
 # Copy the JAR file into the image
 COPY ${JAR_FILE} app.jar
 
@@ -22,5 +25,5 @@ COPY ${PROPERTIES} application.yml
 
 # Set the entry point for the container
 
-ENTRYPOINT ["java", "-jar", "-javaagent:/pinpoint-agent/pinpoint-bootstrap-2.5.3.jar", "-Dpinpoint.applicationName=MainBackEnd", "-Dpinpoint.agentId=bemain", "/app.jar"]
+ENTRYPOINT ["java", "-jar", "-javaagent:/pinpoint-agent/pinpoint-bootstrap-2.5.3.jar", "-Dpinpoint.applicationName=MainBackEnd", "-Dpinpoint.agentId=bemain", "-Dpinpoint.config=/pinpoint-agent/pinpoint-root.config", "/app.jar"]
 
