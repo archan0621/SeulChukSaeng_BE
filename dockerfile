@@ -5,6 +5,19 @@ FROM openjdk:19
 ARG JAR_FILE=build/libs/*.jar
 ARG PROPERTIES
 
+ARG PINPOINTLICENSE
+ENV URL $PINPOINTLICENSE
+
+# Install wget
+RUN apt-get update && apt-get install -y wget
+
+# Download and extract the pinpoint agent
+RUN wget https://ncloud-pinpoint.com/agent.tar.gz \
+    && tar xvf agent.tar.gz -C / \
+    && mv /pinpoint-agent-2.2.3-NCP-RC1 /pinpoint-agent \
+    && echo "'"$PINPOINTLICENSE"'" > /pinpoint-agent/pinpoint.license \
+    && export pinpointPath=/pinpoint-agent-2.2.3-NCP-RC1
+
 # Copy the JAR file into the image
 COPY ${JAR_FILE} app.jar
 
@@ -12,4 +25,6 @@ COPY ${JAR_FILE} app.jar
 COPY ${PROPERTIES} application.yml
 
 # Set the entry point for the container
-ENTRYPOINT ["nohup", "java", "-jar", "/app.jar", ">" , "/server.log"]
+
+ENTRYPOINT ["java", "-jar", "-javaagent:${pinpointPath}/pinpoint-bootstrap-2.2.3-NCP-RC1.jar", "-Dpinpoint.applicationName=MainBackEnd", "-Dpinpoint.agentId=bemain", "/app.jar"]
+
