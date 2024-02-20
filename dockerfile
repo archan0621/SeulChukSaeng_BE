@@ -1,5 +1,5 @@
 # Use the specified OpenJDK 19 base image
-FROM openjdk:19
+FROM openjdk:17
 
 # Set the JAR file and properties file arguments
 ARG JAR_FILE=build/libs/*.jar
