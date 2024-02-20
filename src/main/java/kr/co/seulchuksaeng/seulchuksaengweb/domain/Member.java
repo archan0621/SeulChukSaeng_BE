@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity @Getter
-@Table(name = "MEMBER")
+@Table(name = "MEMBER", uniqueConstraints = {@UniqueConstraint(columnNames = {"id"}, name = "ID_UNIQUE")})
 public class Member {
 
     @Id
@@ -21,10 +21,10 @@ public class Member {
     @Column(name = "password", nullable = false)
     private String password;
 
-    @Column(name = "name", nullable = false)
+    @Column(name = "name", nullable = false, length = 50)
     private String name;
 
-    @Column(name = "phone", nullable = false)
+    @Column(name = "phone", nullable = false, length = 13)
     private String phone;
 
     @Column(name = "gender", nullable = false)
@@ -53,6 +53,10 @@ public class Member {
         this.role = role;
         this.salt = salt;
         this.warnPoint = warnPoint;
+    }
+
+    public Member(Long memberId) {
+        this.memberId = memberId;
     }
 
     public void giveWarnPoint() {

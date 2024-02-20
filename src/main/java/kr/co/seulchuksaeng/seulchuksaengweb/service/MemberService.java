@@ -15,6 +15,7 @@ import kr.co.seulchuksaeng.seulchuksaengweb.security.Crypto;
 import kr.co.seulchuksaeng.seulchuksaengweb.security.TokenProvider;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -45,7 +46,12 @@ public class MemberService {
 
         // 암호화한 정보로 회원 저장
         Member member = new Member(joinForm.id(), saltPassword, joinForm.name(), joinForm.phone(), joinForm.gender(), UserRole.USER, salt, 0);
-        memberRepository.save(member);
+
+        try {
+            memberRepository.save(member);
+        } catch (DataIntegrityViolationException e) {
+            throw new ExistMemberException();
+        }
 
         return member.getMemberId();
     }
