@@ -7,6 +7,7 @@ import kr.co.seulchuksaeng.seulchuksaengweb.httpProvider.resp.LocationResponse;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.NetworkException;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.event.NotValidAddressException;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,7 @@ public class NaverMapApiProvider {
                 .build();
     }
 
+    @Cacheable(value = "locationCache", key = "#location")
     public LocationResponse checkLocation(String location) {
 
         WebClient webClient = getConnection("https://naveropenapi.apigw.ntruss.com/map-geocode/v2/geocode");
