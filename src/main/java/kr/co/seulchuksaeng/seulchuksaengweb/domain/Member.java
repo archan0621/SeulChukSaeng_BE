@@ -63,5 +63,9 @@ public class Member {
         this.warnPoint++;
     }
 
+    public void giveWarnPoint(Integer warnPoint) {
+        this.warnPoint += warnPoint;
+    }
+
     public Member () {}
 }

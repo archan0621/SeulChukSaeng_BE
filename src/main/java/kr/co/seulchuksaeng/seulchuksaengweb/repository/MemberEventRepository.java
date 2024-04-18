@@ -1,9 +1,11 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.repository;
 
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.LockModeType;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.*;
 import kr.co.seulchuksaeng.seulchuksaengweb.exception.member.NoEventMemberException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.jpa.repository.Lock;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;

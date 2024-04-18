@@ -1,6 +1,9 @@
 package kr.co.seulchuksaeng.seulchuksaengweb.scheduler;
 import kr.co.seulchuksaeng.seulchuksaengweb.domain.Event;
+import kr.co.seulchuksaeng.seulchuksaengweb.domain.Member;
+import kr.co.seulchuksaeng.seulchuksaengweb.httpProvider.DiscordWebhookSender;
 import kr.co.seulchuksaeng.seulchuksaengweb.repository.EventRepository;
+import kr.co.seulchuksaeng.seulchuksaengweb.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.TaskScheduler;
@@ -28,7 +31,9 @@ import java.util.List;
 public class PenaltyScheduler {
 
     private final EventRepository eventRepository;
+    private final MemberRepository memberRepository;
     private final PenaltyGrantTask penaltyGrantTask;
+    private final DiscordWebhookSender discordWebhookSender;
 
     @Scheduled(cron = "0 0 0 ? * SUN")
     public void checkTodaysEvent() {
@@ -39,11 +44,24 @@ public class PenaltyScheduler {
             log.info("오늘은 경기가 없는 주입니다~! 경고 스케줄러를 따로 생성하지 않겠습니다!");
         } else {
             for (Event i : byEndTime) {
+                log.info(i.getTitle() + " 정산 스케줄러를 생성합니다.");
+                discordWebhookSender.sendLog("경고 정산 예약 알림", i.getTitle() + " 종료시 경고가 정산됩니다.");
                 createPenaltyScheduler(i.getEndTime(), i);
             }
         }
     }
 
+    @Scheduled(cron = "0 0 21 * * *")
+    public void checkAttendance() {
+        LocalDate today = LocalDate.now();
+
+        List<Member> memberList = memberRepository.findAllMember();
+
+        memberList.forEach( member -> {
+
+        });
+
+    }
 
     public void createPenaltyScheduler(LocalDateTime executionTime, Event event) {
         TaskScheduler taskScheduler = new ConcurrentTaskScheduler();
@@ -56,7 +74,6 @@ public class PenaltyScheduler {
 
         CronTrigger trigger = new CronTrigger(cronExpression);
         taskScheduler.schedule(() -> penaltyGrantTask.grantTask(event), trigger);
-
     }
 
 }
