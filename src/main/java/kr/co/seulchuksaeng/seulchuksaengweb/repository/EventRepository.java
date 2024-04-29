@@ -24,7 +24,7 @@ public class EventRepository {
 
     public List<Event> findEventList() {
         return entityManager.createQuery("select e from Event e order by e.startTime desc", Event.class)
-                .setMaxResults(4)
+//                .setMaxResults(4)
                 .getResultList();
     }
 
