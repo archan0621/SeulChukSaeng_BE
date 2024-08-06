@@ -21,7 +21,7 @@ public class MemberEventRepository {
     }
 
     public List<MemberEvent> getAllMemberList(Event event) {
-        return entityManager.createQuery("select me from MemberEvent me where me.event = :event", MemberEvent.class)
+        return entityManager.createQuery("select me from MemberEvent me join fetch me.member where me.event = :event", MemberEvent.class)
                 .setParameter("event", event)
                 .getResultList();
     }
@@ -73,7 +73,7 @@ public class MemberEventRepository {
     }
 
     public List<MemberEvent> getMemberJoinedEvent(Member member) {
-        return entityManager.createQuery("select me from MemberEvent me where me.member = :member", MemberEvent.class)
+        return entityManager.createQuery("select me from MemberEvent me join fetch me.event where me.member = :member", MemberEvent.class)
                 .setParameter("member", member)
                 .getResultList();
     }
